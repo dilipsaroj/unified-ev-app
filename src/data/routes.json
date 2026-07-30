@@ -1,0 +1,38 @@
+[
+  {
+    "id": "mumbai-pune",
+    "originName": "Mumbai",
+    "originCoords": { "lat": 19.076, "lng": 72.877 },
+    "destinationName": "Pune",
+    "destinationCoords": { "lat": 18.520, "lng": 73.856 },
+    "distanceKm": 148,
+    "durationMins": 195,
+    "polylineEncoded": "yphjB{wt{LnDh@~Cf@dD`@|Ap@~Bv@xBn@vAt@dAr@|@x@`@v@t@lAt@pAr@~Av@lBt@jBn@~Bh@`CZzBVzBJpBDzB?xBGtBMpBSjBYfBc@|A_AlBoA`CuA|BuArBsA~AoA|AeAzAgAzA_AzAs@zAi@xAc@xAWtAQtAKtACtA?tAHpAPnAVlA\\lA`@jAf@hAj@fAp@dAt@`Az@~@`Ab@jAXxALvADxAExAMvAUvA]tAc@rAk@pAs@lAy@jA_AhAcAfAgAx@kAr@{@n@cAh@cA^eAZgARoALqAFsADwA?yAEyAMyASwAa@uAe@sAm@qAu@oA}@kA{@iAgAgAoAcAqA_AyA{@_B_@_BYgBUqBMuBE}BA_CFyCPwCb@qCp@kC~@_DvAoDrByD~BkEvCiFpDgGbE_H~EaIjGoJzHqKjJcM`L}NhNoPpPyQlRgShTqTxU_VbWcW`XaXnYiYlZg[x[}[z\\m\\j]y]`^_^v^k^l_{^f`gb@~`ob@vcac@nduc@|duc@xeec@pgmc@fhec@zh{c@xhuc@phuc@|hoc@piqc@fisc@`iuc@vjwc@ljyc@vjec@ljec@ziuc@xisc@riqc@niwc@|hic@thuc@xhac@lhec@dhgc@|g_c@tgac@lgac@dgcc@|fec@tfgc@nfic@`fkc@vekc@nemc@feoc@xdoc@pdqc@hdsc@`duc@vc",
+    "chargingStopStationId": "tp-lonavala-01",
+    "alternativeStationIds": ["statiq-lonavala-01", "jio-khandala-01"]
+  },
+  {
+    "id": "delhi-jaipur",
+    "originName": "Delhi",
+    "originCoords": { "lat": 28.6139, "lng": 77.2090 },
+    "destinationName": "Jaipur",
+    "destinationCoords": { "lat": 26.9124, "lng": 75.7873 },
+    "distanceKm": 280,
+    "durationMins": 330,
+    "polylineEncoded": "ommyDie~uMdBrDdBvDfBzDhB~DjBbElBfEpBjErBlEnBnEpBrEpBvEnBzEpB~EjBbFjBfFhBjFhBnFfBrF`BvF`BzF~@~F|@bG|@fGz@jGx@nGv@rGt@vGr@zGp@~Gn@bHl@fHj@jHh@nHf@rHd@vHb@zH`@~H^bIZfIXjIVnITrIRvIPzINbJLfJJjJHnJFrJDvJBzJ?~JC~JEzJGvJIrJKnJMjJOvIQrISrIUtIWpI[nIc@lIe@jIg@hIi@fIm@dIo@bIq@`Is@~Hz@|H|@zH~@xH`AxHbAvHdAtHfArHhApHjAnHlAlHnAjHpAhHrAfHtAdHvAbHzA`H|A~G~A|G`AzGbAxGdAvGfAtGhArGjApGlAnGnAlGpAjGrAhGtAfGvAdGxAbG|@`G~@~F`A|FbAzFdAxFfAvFhAtFjArFlApFnAnFpAlFrAjFtAhFvAfFxAdF|@bF~@`FbA~EbA|EdAzEfAxEhAvEjAtElArEnApElAnEpAlEpAjErAhEtAfEvAdE|@bE~@`EbA~DbA|DdAzDfAxDhAvDjAtDlArDnApDpAnDrAlDtAjDvAhDxAfDzAdD|@bD~@`DbA~CdA|CfAzChAxCjAvClAtCnArCpApCrAnCtAlCvAjCxAhCzAfC|@dC~@bCbA`CdA~BfA|BhAzBjAxBlAvBnAtBpArBrApBtAnBvAlBxAjBzAhB|@fB~@dBbAaBdA_BfA}AhA{AjAyAnAwAoAuApAsAqAqAsAoAuAmAwAiAyAgA{AeA}AcA_BaAaBkCuDgCyDeCyDaCyD_CyD{ByDwByDsByDoBwDkBwDgBuDcBuD_BsDaBqDWqDSqDOoDKoDE",
+    "chargingStopStationId": "tp-neemrana-01",
+    "alternativeStationIds": ["iocl-neemrana-01", "hpcl-kotputli-01"]
+  },
+  {
+    "id": "bengaluru-mysore",
+    "originName": "Bengaluru",
+    "originCoords": { "lat": 12.9716, "lng": 77.5946 },
+    "destinationName": "Mysore",
+    "destinationCoords": { "lat": 12.2958, "lng": 76.6394 },
+    "distanceKm": 145,
+    "durationMins": 180,
+    "polylineEncoded": "mvgzAsf{sMhCx@fBt@fBn@dBj@bBf@`Bd@~Ab@|A`@zA^xA\\vAZtAXrAVpATnARlAPjANhALfAJdAHbAFbAD`AB~@@|@?z@Az@Cy@Ew@Gw@Iu@Ku@Ms@Os@Qq@Sq@Uo@Wo@Ym@[m@]k@_@k@a@i@c@i@e@g@g@g@i@e@k@e@m@c@o@c@q@a@s@a@u@_@w@_@y@]y@]{@]{@[}@[_A[_AYaAYaAWcAWcAUeAUeASgASgAQiAQiAOkAOkAMmAMmAKoAKoAIqAIqAGsAGsAEuAEuACwACwAAwA?yA?yAByAByADwADwAFuAFuAHsAHsAJqAJqALoALoANoANmAPmAPkARkARiATiATgAVgAVeAXeAXcAZcAZaA\\aA\\}@^}@^{@`@{@`@y@b@y@b@w@d@w@d@u@f@u@f@s@h@s@h@q@j@q@j@o@l@o@l@m@n@m@n@k@p@k@p@i@r@i@r@g@t@g@t@e@v@e@v@c@x@c@x@a@z@a@z@_@|@_@|@]~@]~@[`A[`AYbAYbAWdAWdAUfAUfASh@",
+    "chargingStopStationId": "statiq-mandya-01",
+    "alternativeStationIds": ["tp-mandya-01", "jio-srirangapatna-01"]
+  }
+]

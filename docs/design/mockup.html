@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EV Prototype — Screen Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand */
+    --color-brand-500: #10B981;
+    --color-brand-600: #059669;
+    --color-brand-50:  #ECFDF5;
+    --color-brand-900: #064E3B;
+    /* Neutral */
+    --color-bg:        #FFFFFF;
+    --color-surface:   #FFFFFF;
+    --color-surface-2: #F5F7FA;
+    --color-surface-3: #E8ECF1;
+    --color-border:    #E1E6ED;
+    --color-ink:       #0F1419;
+    --color-ink-2:     #3D4A5C;
+    --color-ink-3:     #6B7684;
+    --color-ink-4:     #A0AAB8;
+    /* Session dark */
+    --color-session-bg:      #0A0A0F;
+    --color-session-surface: #14141C;
+    --color-session-ink:     #F5F7FA;
+    --color-session-accent:  #34E5A1;
+    /* Reliability */
+    --color-tier-green: #10B981;
+    --color-tier-amber: #F59E0B;
+    --color-tier-red:   #EF4444;
+    /* Semantic */
+    --color-info:    #6366F1;
+    --color-danger:  #EF4444;
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+    --radius-2xl: 28px;
+    /* Shadow */
+    --shadow-sm: 0 1px 2px rgba(15, 20, 25, 0.04);
+    --shadow-md: 0 4px 12px rgba(15, 20, 25, 0.06), 0 2px 4px rgba(15, 20, 25, 0.04);
+    --shadow-lg: 0 12px 32px rgba(15, 20, 25, 0.10), 0 4px 8px rgba(15, 20, 25, 0.06);
+    --shadow-glow-brand: 0 0 40px rgba(52, 229, 161, 0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--color-ink);
+    background: #EEF1F5;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.005em;
+  }
+
+  /* Page layout */
+  .page {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+  .page-header {
+    margin-bottom: 40px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .page-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--color-ink-3);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 40px 32px;
+    justify-items: center;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 360px;
+    height: 780px;
+    border-radius: 44px;
+    padding: 12px;
+    background: #0F1419;
+    box-shadow: 0 30px 60px rgba(15, 20, 25, 0.18), 0 10px 20px rgba(15, 20, 25, 0.10);
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 26px;
+    background: #0F1419;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 32px;
+    background: var(--color-bg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .phone-caption {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  /* Screen chrome */
+  .status-bar {
+    height: 44px;
+    padding: 0 24px 0 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+    padding-bottom: 4px;
+  }
+  .status-bar .icons { display: flex; gap: 5px; align-items: center; opacity: 0.85; }
+  .status-bar .dot { width: 4px; height: 4px; background: currentColor; border-radius: 999px; display: inline-block; }
+  .header {
+    height: 56px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--color-surface);
+  }
+  .header .title { font-size: 17px; font-weight: 600; }
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    background: var(--color-surface-2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--color-ink);
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  .content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background: var(--color-bg);
+  }
+
+  /* Bottom nav */
+  .nav {
+    height: 76px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 8px 0;
+    position: relative;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--color-ink-3);
+    padding-top: 4px;
+  }
+  .nav-item.active { color: var(--color-brand-500); }
+  .nav-item .ic {
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .nav-scan {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px; height: 56px;
+    background: var(--color-brand-500);
+    color: white;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 10px 24px rgba(16, 185, 129, 0.4), 0 2px 6px rgba(16, 185, 129, 0.25);
+  }
+
+  /* Common components */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--color-surface-2);
+    color: var(--color-ink-2);
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+  .chip.active {
+    background: var(--color-brand-500);
+    color: white;
+    border-color: transparent;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    width: 100%;
+    height: 52px;
+    border-radius: var(--radius-lg);
+    background: var(--color-brand-500);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer;
+  }
+  .btn-secondary {
+    width: 100%;
+    height: 44px;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: var(--color-ink);
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+  }
+
+  /* Reliability tier colors */
+  .tier-green { color: var(--color-tier-green); background: rgba(16, 185, 129, 0.10); }
+  .tier-amber { color: var(--color-tier-amber); background: rgba(245, 158, 11, 0.10); }
+  .tier-red   { color: var(--color-tier-red);   background: rgba(239, 68, 68, 0.10); }
+
+  /* ====================== SCREEN 1: LANDING ====================== */
+  .landing {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 24px 32px;
+    background: linear-gradient(180deg, #ECFDF5 0%, #FFFFFF 55%);
+  }
+  .landing-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 15px;
+    margin-bottom: 40px;
+  }
+  .landing-brand-mark {
+    width: 32px; height: 32px;
+    background: var(--color-brand-500);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .landing-hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .landing-eyebrow {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 4px 10px;
+    background: var(--color-brand-50);
+    color: var(--color-brand-900);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .landing-headline {
+    font-size: 34px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+  }
+  .landing-headline .accent { color: var(--color-brand-500); }
+  .landing-sub {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-ink-2);
+    margin-bottom: 40px;
+  }
+  .landing-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .landing-step {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 500;
+    color: var(--color-ink-2);
+    text-align: center;
+  }
+  .landing-step .ic {
+    width: 40px; height: 40px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .landing-cta {
+    margin-top: auto;
+  }
+  .landing-cta .btn-primary { margin-bottom: 12px; }
+  .landing-legal {
+    text-align: center;
+    font-size: 11px;
+    color: var(--color-ink-4);
+  }
+
+  /* ====================== SCREEN 2: MAP ====================== */
+  .map-screen { position: relative; height: 100%; background: #E8ECF1; overflow: hidden; }
+  .map-canvas {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 30% 40%, #DDE4EC 0%, transparent 50%),
+      radial-gradient(circle at 70% 60%, #D5DEE8 0%, transparent 50%),
+      linear-gradient(135deg, #E8ECF1 0%, #D9E0E8 100%);
+  }
+  .map-canvas::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(90deg, rgba(160, 170, 184, 0.25) 1px, transparent 1px),
+      linear-gradient(0deg,  rgba(160, 170, 184, 0.25) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.4;
+  }
+  .map-canvas::after {
+    content: '';
+    position: absolute;
+    top: 25%; left: -10%;
+    width: 120%; height: 4px;
+    background: #C3CDD9;
+    transform: rotate(-8deg);
+    box-shadow:
+      0 120px 0 -1px #C3CDD9,
+      0 240px 0 -1px #C3CDD9,
+      0 -80px 0 -1px #C3CDD9;
+  }
+  .map-search {
+    position: absolute;
+    top: 12px; left: 16px; right: 16px;
+    background: var(--color-surface);
+    border-radius: 999px;
+    padding: 12px 16px 12px 44px;
+    box-shadow: var(--shadow-md);
+    font-size: 14px;
+    color: var(--color-ink-3);
+    z-index: 5;
+    position: absolute;
+  }
+  .map-search::before {
+    content: '⌕';
+    position: absolute;
+    left: 18px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--color-ink-3);
+  }
+  .map-filters {
+    position: absolute;
+    top: 66px;
+    left: 16px; right: 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    z-index: 5;
+  }
+  .map-filters .chip { flex-shrink: 0; background: white; box-shadow: var(--shadow-sm); }
+  .map-filters .chip.active { background: var(--color-brand-500); color: white; }
+  .map-pin {
+    position: absolute;
+    width: 34px; height: 34px;
+    border-radius: 999px;
+    border: 3px solid white;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 12px; font-weight: 700;
+    box-shadow: var(--shadow-md);
+    z-index: 2;
+  }
+  .map-pin.selected {
+    transform: scale(1.25);
+    z-index: 3;
+    box-shadow: var(--shadow-lg);
+  }
+  .map-sheet {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: var(--color-surface);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 8px 16px 20px;
+    box-shadow: var(--shadow-lg);
+    z-index: 4;
+    max-height: 42%;
+    overflow: hidden;
+  }
+  .map-sheet-handle {
+    width: 40px; height: 4px;
+    background: var(--color-surface-3);
+    border-radius: 999px;
+    margin: 0 auto 12px;
+  }
+  .map-sheet-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-ink-3);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .map-sheet-title strong { color: var(--color-ink); }
+
+  .station-card {
+    padding: 14px 12px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    margin-bottom: 10px;
+    background: var(--color-surface);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px 12px;
+    align-items: start;
+  }
+  .station-card .rel {
+    width: 40px; height: 40px;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    grid-row: span 2;
+  }
+  .station-card .row1 {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: 12px;
+  }
+  .station-card .name { font-size: 14px; font-weight: 600; }
+  .station-card .dist { font-size: 12px; color: var(--color-ink-3); font-weight: 500; }
+  .station-card .meta { font-size: 11px; color: var(--color-ink-2); display: flex; align-items: center; gap: 6px; }
+  .cpo-dot { width: 6px; height: 6px; border-radius: 999px; display: inline-block; }
+  .rec-reason {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    color: var(--color-brand-900);
+    background: var(--color-brand-50);
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+    font-style: italic;
+  }
+
+  /* ====================== SCREEN 3: STATION DETAIL ====================== */
+  .station-detail { padding: 0 0 20px; overflow-y: auto; height: 100%; }
+  .station-photos {
+    height: 180px;
+    background: linear-gradient(135deg, #94A3B8 0%, #64748B 100%);
+    position: relative;
+    display: flex; align-items: flex-end;
+    padding: 16px;
+  }
+  .station-photos::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.35) 100%);
+  }
+  .station-photos-dots {
+    position: absolute;
+    bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px;
+    z-index: 2;
+  }
+  .station-photos-dots span {
+    width: 5px; height: 5px; border-radius: 999px;
+    background: rgba(255,255,255,0.5);
+  }
+  .station-photos-dots span.on { background: white; width: 16px; border-radius: 999px; }
+
+  .sd-body { padding: 20px 20px 0; }
+  .sd-cpo-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-ink-3); margin-bottom: 8px; }
+  .sd-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+  .sd-address { font-size: 13px; color: var(--color-ink-3); margin-top: 4px; }
+
+  .sd-rel-hero {
+    margin: 20px 0 24px;
+    padding: 20px;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+  }
+  .sd-rel-hero .big {
+    font-size: 42px; font-weight: 700; line-height: 1;
+    color: var(--color-tier-green);
+    letter-spacing: -0.03em;
+  }
+  .sd-rel-hero .big-suffix { font-size: 16px; color: var(--color-ink-2); font-weight: 500; margin-left: 4px; }
+  .sd-rel-hero .sample { font-size: 12px; color: var(--color-ink-2); margin-top: 6px; }
+  .sd-rel-hero .live {
+    font-size: 12px;
+    display: flex; align-items: center; gap: 6px;
+    color: var(--color-brand-900);
+    margin-top: 8px;
+  }
+  .sd-rel-hero .live .pulse {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--color-brand-500);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+  }
+
+  .sd-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .sd-stat {
+    background: var(--color-surface-2);
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+  }
+  .sd-stat .k { font-size: 10px; color: var(--color-ink-3); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  .sd-stat .v { font-size: 14px; font-weight: 700; margin-top: 2px; }
+
+  .sd-section-title {
+    font-size: 11px;
+    color: var(--color-ink-3);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+  .sd-connectors {
+    display: grid; gap: 6px;
+    margin-bottom: 20px;
+  }
+  .sd-connector {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+  }
+  .sd-connector .left { display: flex; align-items: center; gap: 10px; }
+  .sd-connector .type-badge {
+    background: var(--color-surface-2);
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .sd-review {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 12px;
+    color: var(--color-ink-2);
+    line-height: 1.5;
+  }
+  .sd-review .r-head { display: flex; justify-content: space-between; font-weight: 600; color: var(--color-ink); font-size: 13px; margin-bottom: 4px; }
+  .sd-review .stars { color: var(--color-tier-amber); }
+
+  .sd-cta-fixed {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 12px 16px 20px;
+    background: linear-gradient(0deg, white 60%, transparent);
+  }
+
+  /* ====================== SCREEN 4: SESSION ====================== */
+  .session-screen {
+    background: var(--color-session-bg);
+    color: var(--color-session-ink);
+    height: 100%;
+    padding: 32px 24px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .session-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .session-header .live {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-session-accent);
+  }
+  .session-header .live .pulse {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--color-session-accent);
+    box-shadow: 0 0 0 4px rgba(52, 229, 161, 0.2);
+    animation: pulse 1.6s ease-out infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(52, 229, 161, 0.6); }
+    100% { box-shadow: 0 0 0 12px rgba(52, 229, 161, 0); }
+  }
+  .session-station {
+    font-size: 14px; color: rgba(245, 247, 250, 0.55);
+    margin-bottom: 2px;
+  }
+  .session-connector {
+    font-size: 12px; color: rgba(245, 247, 250, 0.4);
+    margin-bottom: 32px;
+  }
+
+  .dial-wrap {
+    align-self: center;
+    position: relative;
+    width: 260px; height: 260px;
+    margin-bottom: 32px;
+  }
+  .dial-wrap svg { transform: rotate(-90deg); }
+  .dial-track { fill: none; stroke: var(--color-session-surface); stroke-width: 14; }
+  .dial-fill { fill: none; stroke: var(--color-session-accent); stroke-width: 14; stroke-linecap: round; filter: drop-shadow(0 0 12px rgba(52, 229, 161, 0.6)); }
+  .dial-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .dial-center .soc {
+    font-size: 64px; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+    font-feature-settings: 'tnum' 1;
+  }
+  .dial-center .soc-unit { font-size: 20px; color: rgba(245, 247, 250, 0.4); font-weight: 500; margin-left: 2px; }
+  .dial-center .soc-label { font-size: 11px; color: rgba(245, 247, 250, 0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; font-weight: 600; }
+
+  .session-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-bottom: 24px;
+  }
+  .session-stat {
+    background: var(--color-session-surface);
+    padding: 12px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .session-stat .k { font-size: 10px; color: rgba(245, 247, 250, 0.45); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .session-stat .v { font-size: 22px; font-weight: 700; margin-top: 4px; font-feature-settings: 'tnum' 1; letter-spacing: -0.02em; }
+  .session-stat .u { font-size: 12px; color: rgba(245, 247, 250, 0.45); font-weight: 500; margin-left: 2px; }
+
+  .session-timer {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(245, 247, 250, 0.5);
+    margin-bottom: 20px;
+    font-feature-settings: 'tnum' 1;
+  }
+  .session-stop {
+    width: 100%; height: 56px;
+    background: var(--color-danger);
+    color: white;
+    border: none; border-radius: var(--radius-lg);
+    font-size: 16px; font-weight: 700;
+    margin-top: auto;
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+  }
+
+  /* ====================== SCREEN 5: ROUTE PLANNER ====================== */
+  .route-map {
+    height: 300px;
+    background: linear-gradient(135deg, #E8ECF1 0%, #D9E0E8 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .route-map::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(90deg, rgba(160, 170, 184, 0.2) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(160, 170, 184, 0.2) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  .route-line {
+    position: absolute;
+    top: 30%; left: 15%;
+    width: 70%; height: 40%;
+  }
+  .route-pin {
+    position: absolute;
+    width: 22px; height: 22px;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 10px; font-weight: 700;
+    box-shadow: var(--shadow-md);
+    z-index: 3;
+    border: 3px solid white;
+  }
+  .route-panel {
+    padding: 20px 16px;
+    height: calc(100% - 300px);
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .route-summary {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 12px;
+    background: var(--color-surface-2);
+    border-radius: var(--radius-lg);
+  }
+  .route-summary .kv { }
+  .route-summary .k { font-size: 10px; color: var(--color-ink-3); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  .route-summary .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+
+  .route-stop {
+    padding: 12px;
+    border: 1px solid var(--color-brand-500);
+    background: var(--color-brand-50);
+    border-radius: var(--radius-lg);
+  }
+  .route-stop-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--color-brand-900);
+    margin-bottom: 8px;
+  }
+  .route-stop-name { font-size: 15px; font-weight: 600; color: var(--color-ink); margin-bottom: 4px; }
+  .route-stop-meta { font-size: 12px; color: var(--color-ink-2); }
+  .route-stop-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  .route-stop-grid .k { font-size: 10px; color: var(--color-ink-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .route-stop-grid .v { font-size: 14px; font-weight: 700; margin-top: 2px; }
+
+  /* ====================== SCREEN 6: PASSPORT ====================== */
+  .passport { height: 100%; overflow-y: auto; padding: 0 0 80px; }
+  .passport-header {
+    padding: 24px 20px 20px;
+    background: linear-gradient(135deg, #0F1419 0%, #1F2937 100%);
+    color: white;
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  }
+  .passport-header .eyebrow {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.5); font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .passport-header .name { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .passport-stats {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; margin-top: 20px;
+  }
+  .passport-stat {
+    padding: 14px;
+    background: rgba(255,255,255,0.08);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(6px);
+  }
+  .passport-stat .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: rgba(255,255,255,0.5); }
+  .passport-stat .v { font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .passport-stat .v-unit { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 500; margin-left: 3px; }
+
+  .passport-section {
+    padding: 20px 20px 0;
+  }
+  .passport-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600; color: var(--color-ink-3);
+    margin-bottom: 10px;
+  }
+  .session-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .session-row-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--color-surface-2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--color-ink-2);
+  }
+  .session-row-mid { flex: 1; min-width: 0; }
+  .session-row-mid .n { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .session-row-mid .d { font-size: 11px; color: var(--color-ink-3); }
+  .session-row-right { text-align: right; }
+  .session-row-right .a { font-size: 13px; font-weight: 700; }
+  .session-row-right .e { font-size: 11px; color: var(--color-ink-3); }
+
+  /* ====================== SCREEN 7: PROFILE ====================== */
+  .profile { height: 100%; overflow-y: auto; padding: 20px 20px 80px; }
+  .profile-head {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 24px;
+  }
+  .profile-avatar {
+    width: 64px; height: 64px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--color-brand-500), #34E5A1);
+    color: white; font-weight: 700; font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .profile-name-row .name { font-size: 18px; font-weight: 700; }
+  .profile-name-row .phone { font-size: 12px; color: var(--color-ink-3); margin-top: 2px; }
+
+  .profile-section {
+    margin-bottom: 24px;
+  }
+  .profile-section-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+    font-weight: 600; color: var(--color-ink-3);
+    margin-bottom: 10px;
+  }
+  .vehicle-card {
+    padding: 16px;
+    background: var(--color-surface-2);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+  .vehicle-card .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: var(--color-brand-50);
+    color: var(--color-brand-900);
+    border-radius: 4px;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+  .vehicle-name { font-size: 16px; font-weight: 700; }
+  .vehicle-spec { font-size: 12px; color: var(--color-ink-3); margin-top: 2px; }
+  .vehicle-attrs {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+  }
+  .vehicle-attr .k { font-size: 10px; color: var(--color-ink-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .vehicle-attr .v { font-size: 14px; font-weight: 700; margin-top: 2px; }
+
+  .profile-list-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 14px;
+  }
+  .profile-list-item .l { display: flex; align-items: center; gap: 12px; }
+  .profile-list-item .ic {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--color-surface-2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .profile-list-item .r { color: var(--color-ink-3); font-size: 13px; }
+
+  /* Legend section */
+  .legend {
+    background: white;
+    max-width: 1080px;
+    margin: 0 auto 40px;
+    padding: 24px 32px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .legend h2 { font-size: 18px; margin-bottom: 4px; }
+  .legend p { font-size: 13px; color: var(--color-ink-3); }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .legend-swatch { width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="page-title">EV Prototype — Screen Mockups</div>
+      <div class="page-subtitle">Design system v1.0 applied to the 7 core screens. Companion to <code>caas_prototype_feature_spec.md</code>.</div>
+    </div>
+    <div class="page-subtitle">Open this file in a browser at desktop size to see all screens side by side.</div>
+  </div>
+
+  <div class="legend">
+    <h2>Reliability tiers</h2>
+    <p>The color language every screen shares.</p>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--color-tier-green)"></span>Reliable — <strong>≥ 90%</strong></div>
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--color-tier-amber)"></span>Mixed — <strong>70–89%</strong></div>
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--color-tier-red)"></span>Unreliable — <strong>&lt; 70%</strong></div>
+      <div class="legend-item"><span class="legend-swatch" style="background: var(--color-brand-500)"></span>Brand — <strong>#10B981</strong></div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- ============= SCREEN 1: LANDING ============= -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="landing">
+            <div class="landing-brand">
+              <div class="landing-brand-mark">⚡</div>
+              <span>Your app name</span>
+            </div>
+            <div class="landing-hero">
+              <span class="landing-eyebrow">One app · Every charger</span>
+              <div class="landing-headline">
+                Charge anywhere in India. <span class="accent">Know it works</span> before you drive.
+              </div>
+              <div class="landing-sub">
+                Real-time reliability across every network. No prepaid wallets — pay how you want.
+              </div>
+              <div class="landing-steps">
+                <div class="landing-step"><div class="ic">⌕</div>Find</div>
+                <div class="landing-step"><div class="ic">▢</div>Scan</div>
+                <div class="landing-step"><div class="ic">⚡</div>Charge</div>
+                <div class="landing-step"><div class="ic">✓</div>Pay</div>
+              </div>
+            </div>
+            <div class="landing-cta">
+              <button class="btn-primary">Continue with phone number</button>
+              <div class="landing-legal">By continuing you agree to our terms.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-caption">Landing / Onboarding</div>
+    </div>
+
+    <!-- ============= SCREEN 2: MAP ============= -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span class="icons"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+          <div class="content">
+            <div class="map-screen">
+              <div class="map-canvas"></div>
+              <div class="map-search">Search "CCS2 near me"</div>
+              <div class="map-filters">
+                <span class="chip active">Available now</span>
+                <span class="chip">DC fast</span>
+                <span class="chip">≥ 90% reliable</span>
+                <span class="chip">&lt; ₹15/kWh</span>
+              </div>
+
+              <div class="map-pin selected" style="top: 38%; left: 42%; background: var(--color-tier-green);">D</div>
+              <div class="map-pin" style="top: 30%; left: 22%; background: var(--color-tier-green);">A</div>
+              <div class="map-pin" style="top: 44%; left: 68%; background: var(--color-tier-amber);">D</div>
+              <div class="map-pin" style="top: 22%; left: 55%; background: var(--color-tier-red);">D</div>
+              <div class="map-pin" style="top: 52%; left: 30%; background: var(--color-tier-green);">A</div>
+              <div class="map-pin" style="top: 20%; left: 78%; background: var(--color-tier-green);">D</div>
+              <div class="map-pin" style="top: 48%; left: 82%; background: var(--color-tier-amber);">A</div>
+
+              <div class="map-sheet">
+                <div class="map-sheet-handle"></div>
+                <div class="map-sheet-title"><strong>Recommended</strong> · 6 stations within 5 km</div>
+
+                <div class="station-card">
+                  <div class="rel tier-green">94%</div>
+                  <div class="row1">
+                    <div class="name">Tata Power EZ — BKC</div>
+                    <div class="dist">1.2 km</div>
+                  </div>
+                  <div class="meta"><span class="cpo-dot" style="background:#1B4B96"></span>Tata Power · CCS2 · 50 kW · ₹18.5/kWh</div>
+                  <div class="rec-reason">400 m farther than nearest, but 32% more reliable</div>
+                </div>
+
+                <div class="station-card">
+                  <div class="rel tier-green">92%</div>
+                  <div class="row1">
+                    <div class="name">Jio-bp Pulse — Andheri E</div>
+                    <div class="dist">2.1 km</div>
+                  </div>
+                  <div class="meta"><span class="cpo-dot" style="background:#00A550"></span>Jio-bp · CCS2 · 60 kW · ₹17.9/kWh</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="nav">
+            <div class="nav-item active"><div class="ic">⌂</div>Map</div>
+            <div class="nav-item"><div class="ic">↝</div>Route</div>
+            <div class="nav-item"><div class="nav-scan">▢</div></div>
+            <div class="nav-item"><div class="ic">▤</div>Passport</div>
+            <div class="nav-item"><div class="ic">◉</div>Profile</div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-caption">Unified Map (home)</div>
+    </div>
+
+    <!-- ============= SCREEN 3: STATION DETAIL ============= -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span class="icons"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+          <div class="content" style="position: relative;">
+            <div class="station-detail">
+              <div class="station-photos">
+                <div class="station-photos-dots"><span class="on"></span><span></span><span></span></div>
+              </div>
+              <div class="sd-body">
+                <div class="sd-cpo-row">
+                  <span class="cpo-dot" style="background:#1B4B96"></span>
+                  <span>Tata Power EZ Charge</span>
+                </div>
+                <div class="sd-title">BKC Signature Tower</div>
+                <div class="sd-address">Bandra Kurla Complex, Mumbai 400051</div>
+
+                <div class="sd-rel-hero">
+                  <div>
+                    <span class="big">94</span><span class="big-suffix">% reliability</span>
+                  </div>
+                  <div class="sample">Based on 1,247 sessions in the last 30 days</div>
+                  <div class="live"><span class="pulse"></span>Last confirmed working 12 minutes ago</div>
+                </div>
+
+                <div class="sd-stats">
+                  <div class="sd-stat"><div class="k">Avg wait</div><div class="v">2 min</div></div>
+                  <div class="sd-stat"><div class="k">Traffic</div><div class="v">Low</div></div>
+                  <div class="sd-stat"><div class="k">Best time</div><div class="v">2–5 pm</div></div>
+                </div>
+
+                <div class="sd-section-title">Connectors</div>
+                <div class="sd-connectors">
+                  <div class="sd-connector">
+                    <div class="left"><span class="type-badge">CCS2</span>50 kW DC</div>
+                    <div><strong>₹18.5</strong><span style="color: var(--color-ink-3); font-size: 11px;">/kWh</span></div>
+                  </div>
+                  <div class="sd-connector">
+                    <div class="left"><span class="type-badge">CCS2</span>50 kW DC</div>
+                    <div><strong>₹18.5</strong><span style="color: var(--color-ink-3); font-size: 11px;">/kWh</span></div>
+                  </div>
+                  <div class="sd-connector">
+                    <div class="left"><span class="type-badge">Type 2</span>22 kW AC</div>
+                    <div><strong>₹14.2</strong><span style="color: var(--color-ink-3); font-size: 11px;">/kWh</span></div>
+                  </div>
+                </div>
+
+                <div class="sd-section-title">Recent reviews</div>
+                <div class="sd-review">
+                  <div class="r-head"><span>Anish P. <span class="badge tier-green" style="margin-left:4px;">✓ verified</span></span><span class="stars">★★★★★</span></div>
+                  Clean, well-lit, security helpful. Both CCS2 units working. Cable a bit stiff.
+                </div>
+                <div class="sd-review">
+                  <div class="r-head"><span>Priya M.</span><span class="stars">★★★★☆</span></div>
+                  Worked fine, ~45 min for 20 kWh. Café next door for waiting.
+                </div>
+
+                <div style="height: 100px"></div>
+              </div>
+            </div>
+            <div class="sd-cta-fixed">
+              <button class="btn-primary">▢ &nbsp; Scan to Charge</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-caption">Station Detail</div>
+    </div>
+
+    <!-- ============= SCREEN 4: SESSION ============= -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="content">
+            <div class="session-screen">
+              <div class="session-header">
+                <span class="live"><span class="pulse"></span>Live · Charging</span>
+                <span style="font-size: 11px; color: rgba(245, 247, 250, 0.4)">Session #A78F</span>
+              </div>
+              <div class="session-station">Tata Power EZ · BKC Signature Tower</div>
+              <div class="session-connector">Connector A2 · CCS2 · 50 kW</div>
+
+              <div class="dial-wrap">
+                <svg width="260" height="260" viewBox="0 0 260 260">
+                  <circle class="dial-track" cx="130" cy="130" r="112"></circle>
+                  <circle class="dial-fill" cx="130" cy="130" r="112" stroke-dasharray="703.7" stroke-dashoffset="225"></circle>
+                </svg>
+                <div class="dial-center">
+                  <div><span class="soc">68</span><span class="soc-unit">%</span></div>
+                  <div class="soc-label">State of charge</div>
+                </div>
+              </div>
+
+              <div class="session-stats">
+                <div class="session-stat">
+                  <div class="k">Delivered</div>
+                  <div class="v">11.4<span class="u">kWh</span></div>
+                </div>
+                <div class="session-stat">
+                  <div class="k">Cost</div>
+                  <div class="v">₹211<span class="u">.20</span></div>
+                </div>
+                <div class="session-stat">
+                  <div class="k">Power</div>
+                  <div class="v">48<span class="u">kW</span></div>
+                </div>
+              </div>
+              <div class="session-timer">14 min elapsed · ~12 min to 80%</div>
+              <button class="session-stop">Stop charging</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-caption">Session Screen (dark theme)</div>
+    </div>
+
+    <!-- ============= SCREEN 5: ROUTE PLANNER ============= -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span class="icons"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+          <div class="header">
+            <button class="icon-btn">←</button>
+            <div class="title">Mumbai → Pune</div>
+            <button class="icon-btn">⚙</button>
+          </div>
+          <div class="content">
+            <div class="route-map">
+              <svg class="route-line" width="100%" height="100%" viewBox="0 0 300 100" preserveAspectRatio="none">
+                <path d="M 10 80 Q 100 30 160 55 T 290 20" stroke="#6366F1" stroke-width="4" stroke-dasharray="8 6" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div class="route-pin" style="background: var(--color-ink); top: 60%; left: 12%;">A</div>
+              <div class="route-pin" style="background: var(--color-brand-500); top: 45%; left: 52%;">⚡</div>
+              <div class="route-pin" style="background: var(--color-ink); top: 22%; left: 88%;">B</div>
+            </div>
+            <div class="route-panel">
+              <div class="route-summary">
+                <div class="kv"><div class="k">Distance</div><div class="v">148 km</div></div>
+                <div class="kv"><div class="k">Duration</div><div class="v">3 h 15</div></div>
+                <div class="kv"><div class="k">Arrive SoC</div><div class="v">32%</div></div>
+              </div>
+
+              <div class="sd-section-title" style="margin: 8px 0 0;">1 charging stop</div>
+              <div class="route-stop">
+                <div class="route-stop-head">
+                  <span>Charging stop</span>
+                  <span>ETA 11:47 am</span>
+                </div>
+                <div class="route-stop-name">Statiq Highway Hub — Khopoli</div>
+                <div class="route-stop-meta">72 km in · 60 kW CCS2 · ₹21/kWh · 93% reliable</div>
+                <div class="route-stop-grid">
+                  <div><div class="k">Arrive</div><div class="v">18%</div></div>
+                  <div><div class="k">Charge to</div><div class="v">75%</div></div>
+                  <div><div class="k">Duration</div><div class="v">28 min</div></div>
+                </div>
+              </div>
+
+              <button class="btn-primary">Start navigation</button>
+              <button class="btn-secondary">See 2 alternative stops</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-caption">Route Planner</div>
+    </div>
+
+    <!-- ============= SCREEN 6: PASSPORT ============= -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span class="icons"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+          <div class="content">
+            <div class="passport">
+              <div class="passport-header">
+                <div class="eyebrow">Charging Passport</div>
+                <div class="name">Dilip's Nexon EV</div>
+                <div class="passport-stats">
+                  <div class="passport-stat">
+                    <div class="k">Total sessions</div>
+                    <div class="v">47</div>
+                  </div>
+                  <div class="passport-stat">
+                    <div class="k">Energy delivered</div>
+                    <div class="v">832<span class="v-unit">kWh</span></div>
+                  </div>
+                  <div class="passport-stat">
+                    <div class="k">Spent</div>
+                    <div class="v">₹15,847</div>
+                  </div>
+                  <div class="passport-stat">
+                    <div class="k">🌱 CO₂ saved</div>
+                    <div class="v">683<span class="v-unit">kg</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="passport-section">
+                <div class="passport-title">Recent sessions</div>
+                <div class="session-row">
+                  <div class="session-row-icon" style="background:#1B4B96; color: white;">TP</div>
+                  <div class="session-row-mid">
+                    <div class="n">Tata Power EZ — BKC</div>
+                    <div class="d">Yesterday · 18.4 kWh · 42 min</div>
+                  </div>
+                  <div class="session-row-right">
+                    <div class="a">₹340</div>
+                    <div class="e">CCS2</div>
+                  </div>
+                </div>
+                <div class="session-row">
+                  <div class="session-row-icon" style="background:#00A550; color: white;">JB</div>
+                  <div class="session-row-mid">
+                    <div class="n">Jio-bp Pulse — Andheri E</div>
+                    <div class="d">Jul 24 · 14.2 kWh · 35 min</div>
+                  </div>
+                  <div class="session-row-right">
+                    <div class="a">₹254</div>
+                    <div class="e">CCS2</div>
+                  </div>
+                </div>
+                <div class="session-row">
+                  <div class="session-row-icon" style="background:#7C3AED; color: white;">S</div>
+                  <div class="session-row-mid">
+                    <div class="n">Statiq Hub — Khopoli</div>
+                    <div class="d">Jul 20 · 22.1 kWh · 30 min</div>
+                  </div>
+                  <div class="session-row-right">
+                    <div class="a">₹463</div>
+                    <div class="e">CCS2</div>
+                  </div>
+                </div>
+                <div class="session-row">
+                  <div class="session-row-icon" style="background:#F58220; color: white;">IO</div>
+                  <div class="session-row-mid">
+                    <div class="n">Indian Oil — NH48 Panvel</div>
+                    <div class="d">Jul 18 · 16.8 kWh · 40 min</div>
+                  </div>
+                  <div class="session-row-right">
+                    <div class="a">₹302</div>
+                    <div class="e">CCS2</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="nav">
+            <div class="nav-item"><div class="ic">⌂</div>Map</div>
+            <div class="nav-item"><div class="ic">↝</div>Route</div>
+            <div class="nav-item"><div class="nav-scan">▢</div></div>
+            <div class="nav-item active"><div class="ic">▤</div>Passport</div>
+            <div class="nav-item"><div class="ic">◉</div>Profile</div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-caption">Charging Passport</div>
+    </div>
+
+    <!-- ============= SCREEN 7: PROFILE ============= -->
+    <div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar"><span>9:41</span><span class="icons"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span></div>
+          <div class="header">
+            <button class="icon-btn">←</button>
+            <div class="title">Profile</div>
+            <button class="icon-btn">⋯</button>
+          </div>
+          <div class="content">
+            <div class="profile">
+              <div class="profile-head">
+                <div class="profile-avatar">D</div>
+                <div class="profile-name-row">
+                  <div class="name">Dilip Saroj</div>
+                  <div class="phone">+91 98•••••210</div>
+                </div>
+              </div>
+
+              <div class="profile-section">
+                <div class="profile-section-title">Your EV</div>
+                <div class="vehicle-card">
+                  <div class="badge">Primary</div>
+                  <div class="vehicle-name">Tata Nexon EV Max</div>
+                  <div class="vehicle-spec">2024 · Dark Edition</div>
+                  <div class="vehicle-attrs">
+                    <div class="vehicle-attr"><div class="k">Battery</div><div class="v">40.5 kWh</div></div>
+                    <div class="vehicle-attr"><div class="k">Connector</div><div class="v">CCS2</div></div>
+                    <div class="vehicle-attr"><div class="k">Charge to</div><div class="v">80%</div></div>
+                    <div class="vehicle-attr"><div class="k">Avg usage</div><div class="v">14 kWh/100 km</div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-section">
+                <div class="profile-section-title">Payment</div>
+                <div class="profile-list-item">
+                  <div class="l"><div class="ic">₹</div>UPI VPA</div>
+                  <div class="r">dilip@ybl</div>
+                </div>
+                <div class="profile-list-item">
+                  <div class="l"><div class="ic">▤</div>Auto-hold amount</div>
+                  <div class="r">₹500</div>
+                </div>
+              </div>
+
+              <div class="profile-section">
+                <div class="profile-section-title">Settings</div>
+                <div class="profile-list-item">
+                  <div class="l"><div class="ic">◔</div>Preferred charge time</div>
+                  <div class="r">Any time</div>
+                </div>
+                <div class="profile-list-item">
+                  <div class="l"><div class="ic">✎</div>Notifications</div>
+                  <div class="r">All on</div>
+                </div>
+                <div class="profile-list-item">
+                  <div class="l"><div class="ic">?</div>Help &amp; support</div>
+                  <div class="r">→</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-caption">Profile</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

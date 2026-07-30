@@ -1,0 +1,25 @@
+[
+  { "connectorId": "tp-bkc-01-c1", "scorePct": 94, "sampleSize": 1247, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:15:00Z" },
+  { "connectorId": "tp-bkc-01-c2", "scorePct": 91, "sampleSize": 873, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:02:00Z" },
+
+  { "connectorId": "jio-andheri-01-c1", "scorePct": 85, "sampleSize": 612, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:44:00Z" },
+  { "connectorId": "jio-andheri-01-c2", "scorePct": 88, "sampleSize": 589, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:58:00Z" },
+
+  { "connectorId": "statiq-powai-01-c1", "scorePct": 92, "sampleSize": 934, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:10:00Z" },
+  { "connectorId": "statiq-powai-01-c2", "scorePct": 90, "sampleSize": 701, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:55:00Z" },
+
+  { "connectorId": "hpcl-dadar-01-c1", "scorePct": 58, "sampleSize": 438, "windowDays": 30, "lastConfirmedAt": "2026-07-30T14:22:00Z" },
+  { "connectorId": "hpcl-dadar-01-c2", "scorePct": 72, "sampleSize": 521, "windowDays": 30, "lastConfirmedAt": "2026-07-30T17:30:00Z" },
+
+  { "connectorId": "iocl-thane-01-c1", "scorePct": 78, "sampleSize": 344, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:20:00Z" },
+  { "connectorId": "iocl-thane-01-c2", "scorePct": 81, "sampleSize": 289, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:35:00Z" },
+
+  { "connectorId": "bpcl-worli-01-c1", "scorePct": 96, "sampleSize": 1502, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:18:00Z" },
+  { "connectorId": "bpcl-worli-01-c2", "scorePct": 62, "sampleSize": 211, "windowDays": 30, "lastConfirmedAt": "2026-07-30T11:45:00Z" },
+
+  { "connectorId": "tp-lower-parel-01-c1", "scorePct": 89, "sampleSize": 1087, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:50:00Z" },
+  { "connectorId": "tp-lower-parel-01-c2", "scorePct": 87, "sampleSize": 912, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:40:00Z" },
+
+  { "connectorId": "statiq-vashi-01-c1", "scorePct": 93, "sampleSize": 756, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:05:00Z" },
+  { "connectorId": "statiq-vashi-01-c2", "scorePct": 95, "sampleSize": 623, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:12:00Z" }
+]

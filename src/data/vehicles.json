@@ -1,0 +1,127 @@
+[
+  {
+    "id": "tata-nexon-ev-max",
+    "make": "Tata",
+    "model": "Nexon EV Max",
+    "batteryKwh": 40.5,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 150,
+    "maxChargeRateKw": 50,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "tata-tiago-ev-xt",
+    "make": "Tata",
+    "model": "Tiago EV",
+    "variant": "XT LR",
+    "batteryKwh": 24,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 130,
+    "maxChargeRateKw": 25,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "tata-punch-ev-lr",
+    "make": "Tata",
+    "model": "Punch EV",
+    "variant": "LR",
+    "batteryKwh": 35,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 145,
+    "maxChargeRateKw": 50,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "tata-tigor-ev-xz",
+    "make": "Tata",
+    "model": "Tigor EV",
+    "variant": "XZ+ LR",
+    "batteryKwh": 26,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 135,
+    "maxChargeRateKw": 25,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "mg-zs-ev",
+    "make": "MG",
+    "model": "ZS EV",
+    "batteryKwh": 50.3,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 155,
+    "maxChargeRateKw": 76,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "mg-comet-ev",
+    "make": "MG",
+    "model": "Comet EV",
+    "batteryKwh": 17.3,
+    "connectorType": "TYPE_2_AC",
+    "avgConsumptionWhPerKm": 110,
+    "maxChargeRateKw": 3.3,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "mahindra-xuv400-ev",
+    "make": "Mahindra",
+    "model": "XUV400 EV",
+    "variant": "EL Pro",
+    "batteryKwh": 39.4,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 150,
+    "maxChargeRateKw": 50,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "hyundai-kona-electric",
+    "make": "Hyundai",
+    "model": "Kona Electric",
+    "batteryKwh": 39.2,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 155,
+    "maxChargeRateKw": 100,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "hyundai-ioniq-5",
+    "make": "Hyundai",
+    "model": "Ioniq 5",
+    "batteryKwh": 72.6,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 170,
+    "maxChargeRateKw": 175,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "byd-atto-3",
+    "make": "BYD",
+    "model": "Atto 3",
+    "batteryKwh": 60.5,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 165,
+    "maxChargeRateKw": 88,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "kia-ev6",
+    "make": "Kia",
+    "model": "EV6",
+    "variant": "GT Line",
+    "batteryKwh": 77.4,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 180,
+    "maxChargeRateKw": 240,
+    "preferredChargeToPct": 80
+  },
+  {
+    "id": "mercedes-eqc",
+    "make": "Mercedes-Benz",
+    "model": "EQC",
+    "batteryKwh": 80,
+    "connectorType": "CCS_2",
+    "avgConsumptionWhPerKm": 220,
+    "maxChargeRateKw": 110,
+    "preferredChargeToPct": 80
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "tata-power",
+    "name": "Tata Power",
+    "logoUrl": "/cpos/tata-power.png",
+    "chipColor": "#1B4B96",
+    "protocol": "OCPI_2_2"
+  },
+  {
+    "id": "jio-bp",
+    "name": "Jio-bp",
+    "logoUrl": "/cpos/jio-bp.png",
+    "chipColor": "#00A550",
+    "protocol": "PROPRIETARY_REST"
+  },
+  {
+    "id": "statiq",
+    "name": "Statiq",
+    "logoUrl": "/cpos/statiq.png",
+    "chipColor": "#7C3AED",
+    "protocol": "OCPI_2_2"
+  },
+  {
+    "id": "hpcl",
+    "name": "HPCL",
+    "logoUrl": "/cpos/hpcl.png",
+    "chipColor": "#E31E24",
+    "protocol": "PROPRIETARY_REST"
+  },
+  {
+    "id": "iocl",
+    "name": "IOCL",
+    "logoUrl": "/cpos/iocl.png",
+    "chipColor": "#F58220",
+    "protocol": "PROPRIETARY_REST"
+  },
+  {
+    "id": "bpcl",
+    "name": "BPCL",
+    "logoUrl": "/cpos/bpcl.png",
+    "chipColor": "#FFCB05",
+    "protocol": "PROPRIETARY_REST"
+  }
+]

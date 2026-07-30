@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design tokens — light theme (Direction A) ─────────────────────────── */
+:root {
+  /* Brand */
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-50: #ecfdf5;
+  --color-brand-900: #064e3b;
+
+  /* Neutral */
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-2: #f5f7fa;
+  --color-surface-3: #e8ecf1;
+  --color-border: #e1e6ed;
+  --color-ink: #0f1419;
+  --color-ink-2: #3d4a5c;
+  --color-ink-3: #6b7684;
+  --color-ink-4: #a0aab8;
+
+  /* Session (always dark — never overridden) */
+  --color-session-bg: #0a0a0f;
+  --color-session-surface: #14141c;
+  --color-session-ink: #f5f7fa;
+  --color-session-accent: #34e5a1;
+
+  /* Reliability tiers */
+  --color-tier-green: #10b981;
+  --color-tier-amber: #f59e0b;
+  --color-tier-red: #ef4444;
+  --color-tier-unknown: #9ca3af;
+
+  /* Semantic */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #6366f1;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(15, 20, 25, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 20, 25, 0.06), 0 2px 4px rgba(15, 20, 25, 0.04);
+  --shadow-lg: 0 12px 32px rgba(15, 20, 25, 0.1), 0 4px 8px rgba(15, 20, 25, 0.06);
+  --shadow-glow-brand: 0 0 24px rgba(16, 185, 129, 0.25);
+}
+
+/* ─── Dark theme overrides (Direction B — Ather Dark) ───────────────────── */
+[data-theme='dark'] {
+  --color-bg: #0a0b10;
+  --color-surface: #14161f;
+  --color-surface-2: #1a1d28;
+  --color-surface-3: #2a2e3a;
+  --color-border: #2a2e3a;
+  --color-ink: #f5f7fa;
+  --color-ink-2: #a0aab8;
+  --color-ink-3: #6b7684;
+  --color-ink-4: #4a5568;
+
+  /* Brighter tier colors for dark backgrounds */
+  --color-tier-green: #34e5a1;
+  --color-tier-amber: #fbbf24;
+  --color-tier-red: #f87171;
+
+  /* Adjusted shadows for dark */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-glow-brand: 0 0 40px rgba(52, 229, 161, 0.35);
+}
+
+/* ─── Base styles ───────────────────────────────────────────────────────── */
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular figures for live counters */
+.tabular-nums {
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Motion-reduce: freeze all animations to end state */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Toast slide in */
+@keyframes toast-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
