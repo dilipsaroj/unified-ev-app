@@ -111,7 +111,7 @@ git push origin main
 
 | Variable | Value | Where to Use |
 |----------|-------|--------------|
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | `AIzaSyC5yUcXQcW2ncgRArfA4F-T2_0vBF1VFq8` | Production, Preview, Development |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | *(paste your key from `.env.local` — do not commit it)* | Production, Preview, Development |
 | `NEXT_PUBLIC_DATA_MODE` | `mock` | Production, Preview, Development |
 | `NEXT_PUBLIC_ENVIRONMENT` | `demo` | Production, Preview |
 

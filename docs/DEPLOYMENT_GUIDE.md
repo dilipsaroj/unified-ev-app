@@ -44,14 +44,14 @@ You need to set these in Vercel dashboard:
 
 ### Current Key Security Check
 
-Your key is currently: `AIzaSyC5yUcXQcW2ncgRArfA4F-T2_0vBF1VFq8`
+Your key lives in `.env.local` (local only) and in Vercel Environment Variables (production). Never paste the real key into docs or commit it to git.
 
-**Important:** This key is visible in your `.env.local`. Before deploying:
+**Important:** Before deploying, restrict the key in Google Cloud:
 
 #### Option A: Use Existing Key with Restrictions (Recommended)
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/google/maps-apis/credentials)
-2. Find your API key: `AIzaSyC5yUcXQcW2ncgRArfA4F-T2_0vBF1VFq8`
+2. Find your API key (the one from `.env.local` / Vercel)
 3. Click "Edit" (pencil icon)
 4. Set **Application restrictions:**
    - Select "HTTP referrers (websites)"
@@ -126,7 +126,7 @@ Google Maps requires billing to be enabled:
 
    | Name | Value | Environment |
    |------|-------|-------------|
-   | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | `AIzaSyC5yUcXQcW2ncgRArfA4F-T2_0vBF1VFq8` | Production, Preview, Development |
+   | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | *(paste your key — do not commit it)* | Production, Preview, Development |
    | `NEXT_PUBLIC_DATA_MODE` | `mock` | Production, Preview, Development |
    | `NEXT_PUBLIC_ENVIRONMENT` | `demo` | Production, Preview |
    | `NEXT_PUBLIC_ENVIRONMENT` | `dev` | Development |
