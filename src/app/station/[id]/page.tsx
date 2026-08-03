@@ -6,7 +6,6 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   Share2,
-  Zap,
   Coffee,
   Clock,
   TrendingUp,
@@ -16,20 +15,12 @@ import {
 } from 'lucide-react';
 import { dataClient } from '@/lib/data';
 import { useReliabilityLive } from '@/hooks/useReliabilityLive';
-import type { Station, Review, ConnectorStatus } from '@/lib/data/types';
+import { StationPhotoCarousel } from '@/components/station/StationPhotoCarousel';
+import type { Station, Review, Photo, ConnectorStatus } from '@/lib/data/types';
 
 interface Props {
   params: { id: string };
 }
-
-const GRADIENT_PALETTES = [
-  'linear-gradient(135deg, #1E3A5F 0%, #0F2340 100%)',
-  'linear-gradient(135deg, #EA580C 0%, #C2410C 100%)',
-  'linear-gradient(135deg, #7C3AED 0%, #4C1D95 100%)',
-  'linear-gradient(135deg, #059669 0%, #047857 100%)',
-];
-
-const PHOTO_CAPTIONS = ['Entrance', 'Connector', 'Parking'];
 
 const AMENITY_ICONS: Record<string, React.ReactNode> = {
   cafe: <Coffee size={16} />,
@@ -115,18 +106,19 @@ export default function StationDetailPage({ params }: Props) {
   const router = useRouter();
   const [station, setStation] = useState<Station | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [photos, setPhotos] = useState<Photo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
   useEffect(() => {
     const loadStation = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const [stationData, reviewsData] = await Promise.all([
+        const [stationData, reviewsData, photosData] = await Promise.all([
           dataClient.getStation(params.id),
           dataClient.getReviewsForStation(params.id),
+          dataClient.getPhotosForStation(params.id),
         ]);
 
         if (!stationData) {
@@ -136,6 +128,7 @@ export default function StationDetailPage({ params }: Props) {
 
         setStation(stationData);
         setReviews(reviewsData);
+        setPhotos(photosData);
       } catch (err) {
         setError('Failed to load station');
         console.error(err);
@@ -212,14 +205,13 @@ export default function StationDetailPage({ params }: Props) {
     );
   }
 
-  const gradientIndex = parseInt(station.id.slice(-1), 16) % GRADIENT_PALETTES.length;
-
   return (
     <div
-      className="flex flex-1 flex-col"
+      className="flex h-full min-h-0 flex-col"
       style={{ background: 'var(--color-bg)', color: 'var(--color-ink)' }}
     >
       <div
+        className="flex-shrink-0"
         style={{
           height: 56,
           display: 'flex',
@@ -257,62 +249,11 @@ export default function StationDetailPage({ params }: Props) {
         </button>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          overflowX: 'auto',
-          scrollSnapType: 'x mandatory',
-          height: 180,
-        }}
-        onScroll={(e) => {
-          const index = Math.round(e.currentTarget.scrollLeft / e.currentTarget.offsetWidth);
-          setActivePhotoIndex(index);
-        }}
-      >
-        {PHOTO_CAPTIONS.map((caption, i) => {
-          const paletteIndex = (gradientIndex + i) % GRADIENT_PALETTES.length;
-          return (
-            <div
-              key={i}
-              style={{
-                minWidth: '100%',
-                height: '100%',
-                background: GRADIENT_PALETTES[paletteIndex],
-                scrollSnapAlign: 'start',
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'space-between',
-                padding: 'var(--space-4)',
-              }}
-            >
-              <div
-                style={{
-                  padding: '4px 10px',
-                  background: 'rgba(0, 0, 0, 0.5)',
-                  color: 'white',
-                  borderRadius: 'var(--radius-sm)',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  backdropFilter: 'blur(8px)',
-                }}
-              >
-                {caption}
-              </div>
-              <Zap
-                size={32}
-                color="rgba(255, 255, 255, 0.3)"
-                style={{ position: 'absolute', bottom: 16, right: 16 }}
-              />
-            </div>
-          );
-        })}
-      </div>
+      <StationPhotoCarousel photos={photos} />
 
       <div
+        className="min-h-0 flex-1 overflow-y-auto"
         style={{
-          flex: 1,
-          overflowY: 'auto',
           padding: 'var(--space-4)',
           paddingBottom: 120,
         }}
@@ -485,7 +426,7 @@ export default function StationDetailPage({ params }: Props) {
                     >
                       <div className="flex items-center gap-2">
                         <span style={{ fontSize: 14, fontWeight: 600 }}>{review.userName}</span>
-                        {review.is_curated && (
+                        {review.isCurated && (
                           <div
                             style={{
                               padding: '2px 8px',
@@ -549,16 +490,11 @@ export default function StationDetailPage({ params }: Props) {
       </div>
 
       <div
+        className="absolute bottom-16 left-0 right-0 z-30 flex gap-3"
         style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
           padding: 'var(--space-4)',
           background: 'var(--color-bg)',
           borderTop: '1px solid var(--color-border)',
-          display: 'flex',
-          gap: 'var(--space-3)',
         }}
       >
         <button

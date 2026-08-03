@@ -159,9 +159,10 @@ export default function PassportPage() {
   const vehicleModel = currentVehicle?.model || 'EV';
 
   return (
-    <div className="flex flex-1 flex-col" style={{ background: 'var(--color-bg)' }}>
+    <div className="flex h-full min-h-0 flex-col" style={{ background: 'var(--color-bg)' }}>
       {/* Hero header */}
       <div
+        className="flex-shrink-0"
         style={{
           background: 'linear-gradient(to bottom, var(--color-ink), #1a1b24)',
           borderRadius: '0 0 24px 24px',
@@ -209,7 +210,7 @@ export default function PassportPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 80 }}>
+      <div className="min-h-0 flex-1 overflow-y-auto" style={{ paddingBottom: 80 }}>
         <div className="p-4 space-y-6">
           {/* Battery health section */}
           <div>

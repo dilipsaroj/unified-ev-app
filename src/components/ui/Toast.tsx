@@ -41,6 +41,7 @@ export function Toast({ id, message, type = 'info', onClose }: ToastProps) {
         minWidth: 280,
         maxWidth: 420,
         animation: 'toast-in 0.2s ease-out',
+        pointerEvents: 'auto',
       }}
     >
       <div
@@ -98,13 +99,16 @@ export function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
     <div
       className="toast-container"
       style={{
-        position: 'fixed',
+        position: 'absolute',
         top: 24,
-        right: 24,
+        right: 16,
+        left: 16,
         zIndex: 9999,
         display: 'flex',
         flexDirection: 'column',
         gap: 12,
+        alignItems: 'stretch',
+        pointerEvents: 'none',
       }}
     >
       {toasts.map((toast) => (

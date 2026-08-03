@@ -87,10 +87,10 @@ export default function RoutePage() {
   const showMap = planning || (selectedRoute && selectedRoute !== null);
 
   return (
-    <div className="flex flex-1 flex-col" style={{ background: 'var(--color-bg)' }}>
+    <div className="flex h-full min-h-0 flex-col" style={{ background: 'var(--color-bg)' }}>
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-3"
+        className="flex flex-shrink-0 items-center justify-between px-4 py-3"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         <button
@@ -108,7 +108,7 @@ export default function RoutePage() {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto" style={{ paddingBottom: 80 }}>
+      <div className="min-h-0 flex-1 overflow-y-auto" style={{ paddingBottom: 80 }}>
         {/* Route selection */}
         <div className="p-4 space-y-3">
           {/* Origin */}

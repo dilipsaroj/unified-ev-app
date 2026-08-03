@@ -30,8 +30,8 @@ export default function MapPage() {
   }
 
   return (
-    <div className="relative w-full h-full" style={{ paddingBottom: 64 }}>
-      <div className="absolute inset-0" style={{ bottom: 0 }}>
+    <div className="relative h-full w-full overflow-hidden">
+      <div className="absolute inset-0">
         <MapCanvas
           stations={stations}
           apiKey={MAPS_API_KEY}
@@ -39,10 +39,7 @@ export default function MapPage() {
         />
       </div>
 
-      <div
-        className="absolute left-4 right-4 z-30 flex flex-col gap-2"
-        style={{ top: 16 }}
-      >
+      <div className="absolute left-4 right-4 z-30 flex flex-col gap-2" style={{ top: 16 }}>
         <SearchBar />
         <FilterChips />
       </div>

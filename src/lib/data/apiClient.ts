@@ -20,6 +20,7 @@ export const apiClient: DataClient = {
   getChargingHistory: () => notImplemented('getChargingHistory'),
   getReviewsForStation: () => notImplemented('getReviewsForStation'),
   getPhotosForStation: () => notImplemented('getPhotosForStation'),
+  submitReview: () => notImplemented('submitReview'),
   sendOtp: () => notImplemented('sendOtp'),
   verifyOtp: () => notImplemented('verifyOtp'),
   getCurrentUser: () => notImplemented('getCurrentUser'),

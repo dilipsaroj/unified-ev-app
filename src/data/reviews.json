@@ -8,7 +8,7 @@
     "userName": "Anish Mehta",
     "rating": 5,
     "text": "Both CCS2 slots working, cable a bit stiff but manageable. Security guard very helpful with positioning.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-25T14:30:00Z"
   },
   {
@@ -20,7 +20,7 @@
     "userName": "Priya Nair",
     "rating": 4,
     "text": "Café next door, perfect for a 30-min wait. Station was working perfectly both times I visited.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-22T10:15:00Z"
   },
   {
@@ -32,7 +32,7 @@
     "userName": "Rohan Sharma",
     "rating": 4,
     "text": "Connector B2 always free when B1 is occupied. Good charging speeds, got 40 kWh in 45 minutes.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-24T09:20:00Z"
   },
   {
@@ -44,7 +44,7 @@
     "userName": "Neha Patil",
     "rating": 3,
     "text": "Busy during office hours. Try to come between 10am–1pm for no wait. Speeds are consistent once you get a slot.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-20T16:45:00Z"
   },
   {
@@ -56,7 +56,7 @@
     "userName": "Vikram Desai",
     "rating": 5,
     "text": "Best EV charging experience in Mumbai so far. Both chargers working, free WiFi nearby, overlooks the lake.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-23T11:00:00Z"
   },
   {
@@ -68,7 +68,7 @@
     "userName": "Sneha Kulkarni",
     "rating": 5,
     "text": "Hiranandani has great food options while you charge. AC connector perfect for overnight top-up if you're staying nearby.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-19T18:30:00Z"
   },
   {
@@ -80,7 +80,7 @@
     "userName": "Aditya Joshi",
     "rating": 2,
     "text": "DC fast charger out of order for 2 weeks. AC unit works but painfully slow at 22kW. Staff couldn't give timeline for repair.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-21T08:50:00Z"
   },
   {
@@ -92,7 +92,7 @@
     "userName": "Meera Rao",
     "rating": 3,
     "text": "Parking blocked one weekend due to a local event — has since improved. AC charger reliable but DC is hit or miss.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-18T13:20:00Z"
   },
   {
@@ -104,7 +104,7 @@
     "userName": "Suresh Kumar",
     "rating": 3,
     "text": "30kW DC is slow compared to newer stations but reliable. Good option if you're already in Thane and have time.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-26T07:30:00Z"
   },
   {
@@ -116,7 +116,7 @@
     "userName": "Deepa Iyer",
     "rating": 4,
     "text": "Both connectors working. Morning crowd from 7-9am, otherwise usually free. Staff helpful with the cable.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-17T09:00:00Z"
   },
   {
@@ -128,7 +128,7 @@
     "userName": "Karan Malhotra",
     "rating": 5,
     "text": "Brilliant location, sea view from the parking. DC fast charger is incredibly reliable — haven't seen it fail once.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-27T20:00:00Z"
   },
   {
@@ -140,7 +140,7 @@
     "userName": "Tanya Singh",
     "rating": 4,
     "text": "AC unit was down last month but DC works flawlessly. Best kept secret in South Mumbai for EV charging.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-16T17:15:00Z"
   },
   {
@@ -152,7 +152,7 @@
     "userName": "Ravi Pillai",
     "rating": 4,
     "text": "Phoenix mall right there, makes the wait easy. G1 always working. G2 occasionally busy on weekends.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-28T12:00:00Z"
   },
   {
@@ -164,7 +164,7 @@
     "userName": "Anita Bose",
     "rating": 4,
     "text": "Good infrastructure. Type 2 cable is long enough without straining. Parking attendant watches the bay.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-15T14:00:00Z"
   },
   {
@@ -176,7 +176,7 @@
     "userName": "Raj Nambiar",
     "rating": 5,
     "text": "Navi Mumbai's best. Both chargers almost always available, very high uptime. Statiq app shows live status accurately.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-29T08:45:00Z"
   },
   {
@@ -188,7 +188,7 @@
     "userName": "Pooja Ghosh",
     "rating": 5,
     "text": "Quiet location, never crowded. Used it 4 times — zero faults. AC charger is perfect for my overnight routine.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-14T21:30:00Z"
   },
   {
@@ -200,7 +200,7 @@
     "userName": "Arjun Reddy",
     "rating": 5,
     "text": "Charged from 30% to 80% in 42 minutes, exactly as estimated. Perfect for a quick coffee break at the café.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-13T16:45:00Z"
   },
   {
@@ -212,7 +212,7 @@
     "userName": "Divya Patel",
     "rating": 3,
     "text": "Wait was longer than shown in app — 15 min queue on Sunday evening. Once I got the slot, charging speed was good.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-12T19:20:00Z"
   },
   {
@@ -224,7 +224,7 @@
     "userName": "Rahul Khanna",
     "rating": 2,
     "text": "Session cut off at 60% due to charger fault. Refund processed same day at least. Try another station if you need full charge.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-11T10:30:00Z"
   },
   {
@@ -236,7 +236,7 @@
     "userName": "Kavya Iyer",
     "rating": 4,
     "text": "Parking was blocked by an ICE vehicle last week — station staff resolved it quickly. Charger itself is reliable.",
-    "is_curated": true,
+    "isCurated": true,
     "createdAt": "2026-07-10T15:00:00Z"
   }
 ]
