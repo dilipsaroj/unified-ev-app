@@ -17,6 +17,7 @@ import type {
   RoutePlan,
   PreGeneratedRoute,
   ChargingHistory,
+  SubmitReviewInput,
   Unsubscribe,
 } from './types';
 
@@ -25,6 +26,7 @@ import rawStations from '@/data/stations.json';
 import rawConnectors from '@/data/connectors.json';
 import rawReliability from '@/data/reliability.json';
 import rawReviews from '@/data/reviews.json';
+import rawPhotos from '@/data/photos.json';
 import rawVehicles from '@/data/vehicles.json';
 import rawRoutes from '@/data/routes.json';
 import rawHistory from '@/data/history.json';
@@ -35,9 +37,13 @@ const stations = rawStations as Station[];
 const connectors = rawConnectors as Connector[];
 const reliabilityData = rawReliability as ReliabilityScore[];
 const reviews = rawReviews as Review[];
+const photos = rawPhotos as Photo[];
 const vehicles = rawVehicles as Vehicle[];
 const routes = rawRoutes as PreGeneratedRoute[];
 const chargingHistory = rawHistory as ChargingHistory[];
+
+/** V1 in-memory store for reviews submitted during the session */
+const submittedReviews: Review[] = [];
 
 /** Simulated network delay so loading states get exercised */
 function delay(ms: number): Promise<void> {
@@ -314,12 +320,35 @@ export const mockClient: DataClient = {
 
   async getReviewsForStation(stationId) {
     await randomDelay();
-    return reviews.filter((r) => r.stationId === stationId) as Review[];
+    const seeded = reviews.filter((r) => r.stationId === stationId);
+    const live = submittedReviews.filter((r) => r.stationId === stationId);
+    return [...live, ...seeded] as Review[];
   },
 
-  async getPhotosForStation() {
+  async getPhotosForStation(stationId) {
     await randomDelay();
-    return [] as Photo[];
+    return photos.filter((p) => p.stationId === stationId);
+  },
+
+  async submitReview(input: SubmitReviewInput) {
+    await randomDelay();
+    const station = stations.find((s) => s.id === input.stationId);
+    const review: Review = {
+      id: `r-${Date.now()}`,
+      stationId: input.stationId,
+      cpoId: station?.cpoId ?? 'unknown',
+      sessionId: input.sessionId,
+      userId: input.userId,
+      userName: DEMO_USER.name,
+      rating: input.rating,
+      text: input.text ?? '',
+      isCurated: false, // Real user-written, not seeded
+      createdAt: new Date().toISOString(),
+    };
+    // V1: in-memory only, doesn't persist beyond page reload
+    // Layer 2 will insert into Postgres via Supabase
+    submittedReviews.unshift(review);
+    return review;
   },
 
   async sendOtp() {

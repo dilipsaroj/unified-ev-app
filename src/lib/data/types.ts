@@ -85,7 +85,7 @@ export interface Review {
   userName: string;
   rating: number; // 1-5
   text: string;
-  is_curated: boolean;
+  isCurated: boolean;
   createdAt: string; // ISO 8601
 }
 
@@ -97,7 +97,7 @@ export interface Photo {
   userId: string;
   url: string;
   caption: string;
-  is_curated: boolean;
+  isCurated: boolean;
   createdAt: string;
 }
 
@@ -221,6 +221,14 @@ export interface PlanRouteInput {
   vehicleId: string;
 }
 
+export interface SubmitReviewInput {
+  sessionId: string;
+  stationId: string;
+  userId: string;
+  rating: number; // 1-5
+  text?: string;
+}
+
 export type Unsubscribe = () => void;
 
 /* ─── The DataClient interface ───────────────────────────────────────────── */
@@ -256,6 +264,7 @@ export interface DataClient {
   // Reviews and photos
   getReviewsForStation(stationId: string): Promise<Review[]>;
   getPhotosForStation(stationId: string): Promise<Photo[]>;
+  submitReview(input: SubmitReviewInput): Promise<Review>;
 
   // Auth (V1: accept-anything no-op; V2: real OTP flow)
   sendOtp(phone: string): Promise<{ nonce: string }>;

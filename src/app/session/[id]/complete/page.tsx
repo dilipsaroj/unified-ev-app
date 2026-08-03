@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSessionStore } from '@/stores/sessionStore';
 import { dataClient } from '@/lib/data';
+import { useToast } from '@/hooks/useToast';
 import { CheckCircle } from 'lucide-react';
 import type { Session, Station } from '@/lib/data/types';
 
@@ -16,12 +17,14 @@ type AnimationPhase = 'held' | 'capturing' | 'refunding' | 'settled';
 export default function SessionCompletePage({ params }: Props) {
   const router = useRouter();
   const { activeSession, clearSession } = useSessionStore();
-  
+  const { success, error: showError } = useToast();
+
   const [phase, setPhase] = useState<AnimationPhase>('held');
   const [station, setStation] = useState<Station | null>(null);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   const session = activeSession as Session | null;
 
@@ -54,12 +57,19 @@ export default function SessionCompletePage({ params }: Props) {
 
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      
-      clearSession();
-      router.push('/map');
+      await dataClient.submitReview({
+        sessionId: session.id,
+        stationId: session.stationId,
+        userId: session.userId,
+        rating,
+        text: reviewText.trim() || undefined,
+      });
+      success('Thanks for the review.');
+      setReviewSubmitted(true);
     } catch (err) {
       console.error('Failed to submit review:', err);
+      showError('Could not submit review. Please try again.');
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -336,6 +346,7 @@ export default function SessionCompletePage({ params }: Props) {
               </div>
             </div>
 
+            {!reviewSubmitted && (
             <div
               style={{
                 padding: 'var(--space-5)',
@@ -422,6 +433,7 @@ export default function SessionCompletePage({ params }: Props) {
                 Skip
               </button>
             </div>
+            )}
 
             <button
               onClick={() => {

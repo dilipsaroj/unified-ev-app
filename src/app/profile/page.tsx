@@ -9,7 +9,7 @@ export default function ProfilePage() {
 
   return (
     <div
-      className="flex flex-1 flex-col px-6 pt-10 gap-8"
+      className="flex h-full flex-col overflow-y-auto px-6 pt-10 gap-8"
       style={{ paddingBottom: 96, color: 'var(--color-ink)' }}
     >
       {/* User info */}
@@ -75,14 +75,6 @@ export default function ProfilePage() {
         </p>
         <ThemeToggle />
       </div>
-
-      {/* Placeholder notice */}
-      <p
-        className="text-center"
-        style={{ fontSize: 13, color: 'var(--color-ink-4)', marginTop: 'auto' }}
-      >
-        Full profile, payment methods, and vehicle management coming in Week 2.
-      </p>
     </div>
   );
 }

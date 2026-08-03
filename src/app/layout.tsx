@@ -37,15 +37,39 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} h-full`} suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
-      <body className="font-sans h-full flex flex-col">
-        <ThemeInitializer />
-        <main className="flex-1 flex flex-col overflow-hidden">{children}</main>
-        <BottomNav />
-        <ToastProvider />
+      <body className="font-sans h-full overflow-hidden">
+        {/* Outer backdrop — visible on desktop only via padding + dark fill */}
+        <div className="min-h-full bg-neutral-950 sm:flex sm:items-center sm:justify-center sm:p-6 md:p-10">
+          {/*
+            Phone frame — full viewport on mobile, contained on desktop.
+            transform-gpu makes this the containing block for position:fixed
+            descendants (BottomNav, sheets, toasts) so they stay inside the frame.
+          */}
+          <div
+            className="
+              relative isolate transform-gpu
+              w-full h-[100dvh]
+              sm:w-[420px] sm:h-[900px]
+              sm:max-h-[calc(100dvh-3rem)]
+              sm:rounded-[36px] sm:overflow-hidden
+              sm:shadow-[0_30px_60px_rgba(0,0,0,0.5),0_10px_20px_rgba(0,0,0,0.3)]
+              sm:ring-1 sm:ring-neutral-800
+              flex flex-col
+            "
+            style={{ background: 'var(--color-bg)' }}
+          >
+            <ThemeInitializer />
+            <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+              {children}
+            </main>
+            <BottomNav />
+            <ToastProvider />
+          </div>
+        </div>
       </body>
     </html>
   );

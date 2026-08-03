@@ -52,6 +52,18 @@
   --shadow-md: 0 4px 12px rgba(15, 20, 25, 0.06), 0 2px 4px rgba(15, 20, 25, 0.04);
   --shadow-lg: 0 12px 32px rgba(15, 20, 25, 0.1), 0 4px 8px rgba(15, 20, 25, 0.06);
   --shadow-glow-brand: 0 0 24px rgba(16, 185, 129, 0.25);
+
+  /* Spacing (design system) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
 }
 
 /* ─── Dark theme overrides (Direction B — Ather Dark) ───────────────────── */
@@ -86,7 +98,8 @@ html {
 
 body {
   min-height: 100%;
-  background-color: var(--color-bg);
+  height: 100%;
+  background-color: #0a0a0a;
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -139,4 +152,13 @@ body {
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+/* Hide horizontal scrollbar for carousels */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
