@@ -490,7 +490,7 @@ export default function StationDetailPage({ params }: Props) {
       </div>
 
       <div
-        className="absolute bottom-16 left-0 right-0 z-30 flex gap-3"
+        className="absolute bottom-[calc(4rem+env(safe-area-inset-bottom))] left-0 right-0 z-30 flex gap-3"
         style={{
           padding: 'var(--space-4)',
           background: 'var(--color-bg)',

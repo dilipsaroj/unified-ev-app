@@ -24,13 +24,12 @@ export function BottomNav() {
 
   return (
     <nav
-      className="absolute bottom-0 left-0 right-0 z-50 flex items-end justify-around"
+      className="absolute bottom-0 left-0 right-0 z-50 flex items-end justify-around pb-[env(safe-area-inset-bottom)]"
       style={{
-        height: 64,
+        minHeight: 'calc(64px + env(safe-area-inset-bottom))',
         background: 'var(--color-surface)',
         borderTop: '1px solid var(--color-border)',
         boxShadow: 'var(--shadow-lg)',
-        paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
       {NAV_ITEMS.map(({ href, icon: Icon, label, isCentral }) => {
