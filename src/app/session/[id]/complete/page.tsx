@@ -245,6 +245,7 @@ export default function SessionCompletePage(_props: Props) {
             flex: 1,
             overflowY: 'auto',
             padding: 'var(--space-4)',
+            paddingBottom: 'calc(80px + env(safe-area-inset-bottom))',
             animation: 'slideUp 0.4s ease-out',
           }}
         >
