@@ -290,7 +290,7 @@ export default function SessionPage({ params }: Props) {
       <div
         style={{
           padding: 'var(--space-4)',
-          paddingBottom: 'var(--space-6)',
+          paddingBottom: 'calc(80px + env(safe-area-inset-bottom))',
         }}
       >
         <button
