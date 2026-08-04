@@ -21,5 +21,32 @@
   { "connectorId": "tp-lower-parel-01-c2", "scorePct": 87, "sampleSize": 912, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:40:00Z" },
 
   { "connectorId": "statiq-vashi-01-c1", "scorePct": 93, "sampleSize": 756, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:05:00Z" },
-  { "connectorId": "statiq-vashi-01-c2", "scorePct": 91, "sampleSize": 623, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:12:00Z" }
+  { "connectorId": "statiq-vashi-01-c2", "scorePct": 91, "sampleSize": 623, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:12:00Z" },
+
+  { "connectorId": "tp-lonavala-01-c1", "scorePct": 91, "sampleSize": 823, "windowDays": 30, "lastConfirmedAt": "2026-07-30T17:30:00Z" },
+  { "connectorId": "tp-lonavala-01-c2", "scorePct": 88, "sampleSize": 612, "windowDays": 30, "lastConfirmedAt": "2026-07-30T16:45:00Z" },
+
+  { "connectorId": "statiq-lonavala-01-c1", "scorePct": 87, "sampleSize": 534, "windowDays": 30, "lastConfirmedAt": "2026-07-30T15:20:00Z" },
+  { "connectorId": "statiq-lonavala-01-c2", "scorePct": 84, "sampleSize": 401, "windowDays": 30, "lastConfirmedAt": "2026-07-30T14:55:00Z" },
+
+  { "connectorId": "jio-khandala-01-c1", "scorePct": 83, "sampleSize": 478, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:10:00Z" },
+  { "connectorId": "jio-khandala-01-c2", "scorePct": 79, "sampleSize": 312, "windowDays": 30, "lastConfirmedAt": "2026-07-30T17:50:00Z" },
+
+  { "connectorId": "tp-neemrana-01-c1", "scorePct": 93, "sampleSize": 956, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:00:00Z" },
+  { "connectorId": "tp-neemrana-01-c2", "scorePct": 90, "sampleSize": 734, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:40:00Z" },
+
+  { "connectorId": "iocl-neemrana-01-c1", "scorePct": 76, "sampleSize": 298, "windowDays": 30, "lastConfirmedAt": "2026-07-30T12:30:00Z" },
+  { "connectorId": "iocl-neemrana-01-c2", "scorePct": 81, "sampleSize": 267, "windowDays": 30, "lastConfirmedAt": "2026-07-30T13:15:00Z" },
+
+  { "connectorId": "hpcl-kotputli-01-c1", "scorePct": 71, "sampleSize": 245, "windowDays": 30, "lastConfirmedAt": "2026-07-29T22:10:00Z" },
+  { "connectorId": "hpcl-kotputli-01-c2", "scorePct": 68, "sampleSize": 178, "windowDays": 30, "lastConfirmedAt": "2026-07-29T20:45:00Z" },
+
+  { "connectorId": "statiq-mandya-01-c1", "scorePct": 89, "sampleSize": 667, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:25:00Z" },
+  { "connectorId": "statiq-mandya-01-c2", "scorePct": 86, "sampleSize": 512, "windowDays": 30, "lastConfirmedAt": "2026-07-30T17:40:00Z" },
+
+  { "connectorId": "tp-mandya-01-c1", "scorePct": 92, "sampleSize": 789, "windowDays": 30, "lastConfirmedAt": "2026-07-30T19:05:00Z" },
+  { "connectorId": "tp-mandya-01-c2", "scorePct": 88, "sampleSize": 623, "windowDays": 30, "lastConfirmedAt": "2026-07-30T18:50:00Z" },
+
+  { "connectorId": "jio-srirangapatna-01-c1", "scorePct": 85, "sampleSize": 445, "windowDays": 30, "lastConfirmedAt": "2026-07-30T17:20:00Z" },
+  { "connectorId": "jio-srirangapatna-01-c2", "scorePct": 82, "sampleSize": 334, "windowDays": 30, "lastConfirmedAt": "2026-07-30T16:30:00Z" }
 ]

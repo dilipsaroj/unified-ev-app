@@ -21,5 +21,32 @@
   { "id": "tp-lower-parel-01-c2", "stationId": "tp-lower-parel-01", "cpoId": "tata-power", "identifier": "G2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 14.2, "status": "OCCUPIED" },
 
   { "id": "statiq-vashi-01-c1", "stationId": "statiq-vashi-01", "cpoId": "statiq", "identifier": "H1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 17.5, "status": "AVAILABLE" },
-  { "id": "statiq-vashi-01-c2", "stationId": "statiq-vashi-01", "cpoId": "statiq", "identifier": "H2", "type": "BHARAT_AC_001", "maxPowerKw": 3.3, "pricePerKwh": 8.5, "status": "AVAILABLE" }
+  { "id": "statiq-vashi-01-c2", "stationId": "statiq-vashi-01", "cpoId": "statiq", "identifier": "H2", "type": "BHARAT_AC_001", "maxPowerKw": 3.3, "pricePerKwh": 8.5, "status": "AVAILABLE" },
+
+  { "id": "tp-lonavala-01-c1", "stationId": "tp-lonavala-01", "cpoId": "tata-power", "identifier": "A1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 18.5, "status": "AVAILABLE" },
+  { "id": "tp-lonavala-01-c2", "stationId": "tp-lonavala-01", "cpoId": "tata-power", "identifier": "A2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 14.0, "status": "AVAILABLE" },
+
+  { "id": "statiq-lonavala-01-c1", "stationId": "statiq-lonavala-01", "cpoId": "statiq", "identifier": "B1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 17.5, "status": "AVAILABLE" },
+  { "id": "statiq-lonavala-01-c2", "stationId": "statiq-lonavala-01", "cpoId": "statiq", "identifier": "B2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 13.5, "status": "AVAILABLE" },
+
+  { "id": "jio-khandala-01-c1", "stationId": "jio-khandala-01", "cpoId": "jio-bp", "identifier": "C1", "type": "CCS_2", "maxPowerKw": 60, "pricePerKwh": 19.0, "status": "AVAILABLE" },
+  { "id": "jio-khandala-01-c2", "stationId": "jio-khandala-01", "cpoId": "jio-bp", "identifier": "C2", "type": "BHARAT_DC_001", "maxPowerKw": 15, "pricePerKwh": 9.5, "status": "AVAILABLE" },
+
+  { "id": "tp-neemrana-01-c1", "stationId": "tp-neemrana-01", "cpoId": "tata-power", "identifier": "D1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 18.5, "status": "AVAILABLE" },
+  { "id": "tp-neemrana-01-c2", "stationId": "tp-neemrana-01", "cpoId": "tata-power", "identifier": "D2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 14.0, "status": "AVAILABLE" },
+
+  { "id": "iocl-neemrana-01-c1", "stationId": "iocl-neemrana-01", "cpoId": "iocl", "identifier": "E1", "type": "BHARAT_DC_001", "maxPowerKw": 15, "pricePerKwh": 9.0, "status": "AVAILABLE" },
+  { "id": "iocl-neemrana-01-c2", "stationId": "iocl-neemrana-01", "cpoId": "iocl", "identifier": "E2", "type": "TYPE_2_AC", "maxPowerKw": 7, "pricePerKwh": 11.5, "status": "AVAILABLE" },
+
+  { "id": "hpcl-kotputli-01-c1", "stationId": "hpcl-kotputli-01", "cpoId": "hpcl", "identifier": "F1", "type": "CCS_2", "maxPowerKw": 30, "pricePerKwh": 17.0, "status": "AVAILABLE" },
+  { "id": "hpcl-kotputli-01-c2", "stationId": "hpcl-kotputli-01", "cpoId": "hpcl", "identifier": "F2", "type": "BHARAT_AC_001", "maxPowerKw": 3.3, "pricePerKwh": 7.5, "status": "AVAILABLE" },
+
+  { "id": "statiq-mandya-01-c1", "stationId": "statiq-mandya-01", "cpoId": "statiq", "identifier": "G1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 17.0, "status": "AVAILABLE" },
+  { "id": "statiq-mandya-01-c2", "stationId": "statiq-mandya-01", "cpoId": "statiq", "identifier": "G2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 13.0, "status": "AVAILABLE" },
+
+  { "id": "tp-mandya-01-c1", "stationId": "tp-mandya-01", "cpoId": "tata-power", "identifier": "H1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 18.0, "status": "AVAILABLE" },
+  { "id": "tp-mandya-01-c2", "stationId": "tp-mandya-01", "cpoId": "tata-power", "identifier": "H2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 14.0, "status": "AVAILABLE" },
+
+  { "id": "jio-srirangapatna-01-c1", "stationId": "jio-srirangapatna-01", "cpoId": "jio-bp", "identifier": "I1", "type": "CCS_2", "maxPowerKw": 60, "pricePerKwh": 19.0, "status": "AVAILABLE" },
+  { "id": "jio-srirangapatna-01-c2", "stationId": "jio-srirangapatna-01", "cpoId": "jio-bp", "identifier": "I2", "type": "BHARAT_DC_001", "maxPowerKw": 15, "pricePerKwh": 9.0, "status": "AVAILABLE" }
 ]
