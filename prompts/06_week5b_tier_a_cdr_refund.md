@@ -82,6 +82,21 @@ export interface CDR {
 
 ---
 
+## Style rule — mandatory for this session
+
+**Use Tailwind utility classes for all new UI elements. Do NOT use inline `style={{}}` props.** Only use `style` for computed dynamic values (animated opaque values, programmatic heights). This matches the layout conventions established in Prompt 04c.
+
+Bad:
+```tsx
+<div style={{ fontSize: 13, color: 'var(--color-ink-3)', padding: 16 }}>
+```
+Good:
+```tsx
+<div className="text-sm text-ink-3 p-4">
+```
+
+If a Tailwind token you need isn't in `tailwind.config.ts`, extend the config there and use the class — don't inline the value.
+
 ## Scope for this session — 6 tasks
 
 ### 1. Verify and extend the `Session` type in `types.ts` (1 hour)

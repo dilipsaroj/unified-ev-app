@@ -31,6 +31,7 @@ export default function SessionPage({ params }: Props) {
     id: 'tata-nexon-ev-max',
     make: 'Tata',
     model: 'Nexon EV Max',
+    vehicleClass: 'FOUR_WHEELER' as const,
     batteryKwh: 40.5,
     connectorType: 'CCS_2' as const,
     avgConsumptionWhPerKm: 150,

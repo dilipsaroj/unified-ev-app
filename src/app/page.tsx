@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/stores/userStore';
 import { MapPin, Scan, Zap, CreditCard } from 'lucide-react';
@@ -184,6 +185,24 @@ export default function Home() {
         >
           Why we&apos;re building this →
         </button>
+        <nav
+          className="mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-neutral-ink-3"
+          aria-label="Legal"
+        >
+          <Link href="/policies/refund" className="hover:text-brand-500">
+            Refund Policy
+          </Link>
+          <span aria-hidden>·</span>
+          <a href="#" className="pointer-events-none opacity-70" onClick={(e) => e.preventDefault()}>
+            Privacy
+          </a>
+          <span aria-hidden>·</span>
+          <a href="#" className="pointer-events-none opacity-70" onClick={(e) => e.preventDefault()}>
+            Terms
+          </a>
+          <span aria-hidden>·</span>
+          <span>© 2026 Unified-EV</span>
+        </nav>
       </div>
     </div>
   );

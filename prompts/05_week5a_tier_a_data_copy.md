@@ -16,6 +16,21 @@ You are extending Unified-EV with Tier A features from `docs/05_Future_Scope_Mus
 
 The tier docs explain *why* each addition matters. The Layer 1 doc has the concrete task list. This prompt gives the implementation details.
 
+## Style rule — mandatory for this session
+
+**Use Tailwind utility classes for all new UI elements. Do NOT use inline `style={{}}` props.** Only use `style` for computed dynamic values (animated opaque values, programmatic heights). This matches the layout conventions established in Prompt 04c. Violating this rule creates drift that breaks the design system.
+
+Bad:
+```tsx
+<div style={{ fontSize: 16, background: 'var(--color-surface-2)', padding: 16 }}>
+```
+Good:
+```tsx
+<div className="text-base bg-surface-2 p-4">
+```
+
+If a Tailwind token you need isn't in `tailwind.config.ts`, extend the config there and use the class — don't inline the value.
+
 ## Scope for this session — 7 discrete tasks
 
 Do NOT scope-creep. This session ONLY does the following, in order:

@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSessionStore } from '@/stores/sessionStore';
+import { useUserStore } from '@/stores/userStore';
 import { dataClient } from '@/lib/data';
+import { toCDR } from '@/lib/data/cdr';
 import { useToast } from '@/hooks/useToast';
 import { CheckCircle } from 'lucide-react';
-import type { Session, Station } from '@/lib/data/types';
+import type { Connector, Session, Station, User } from '@/lib/data/types';
 
 interface Props {
   params: { id: string };
@@ -14,13 +16,17 @@ interface Props {
 
 type AnimationPhase = 'held' | 'capturing' | 'refunding' | 'settled';
 
-export default function SessionCompletePage({ params }: Props) {
+const isDevEnv = process.env.NEXT_PUBLIC_ENVIRONMENT === 'dev';
+
+export default function SessionCompletePage(_props: Props) {
   const router = useRouter();
   const { activeSession, clearSession } = useSessionStore();
+  const { currentUser } = useUserStore();
   const { success, error: showError } = useToast();
 
   const [phase, setPhase] = useState<AnimationPhase>('held');
   const [station, setStation] = useState<Station | null>(null);
+  const [connector, setConnector] = useState<Connector | null>(null);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +43,9 @@ export default function SessionCompletePage({ params }: Props) {
     const loadStation = async () => {
       const stationData = await dataClient.getStation(session.stationId);
       setStation(stationData);
+      const matched =
+        stationData?.connectors?.find((c) => c.id === session.connectorId) ?? null;
+      setConnector(matched);
     };
 
     loadStation();
@@ -51,6 +60,39 @@ export default function SessionCompletePage({ params }: Props) {
       clearTimeout(timer3);
     };
   }, [session, router]);
+
+  const handleDownloadCdr = async () => {
+    if (!session || !station || !connector) {
+      showError('CDR export needs session, station, and connector.');
+      return;
+    }
+
+    let user: User | null = currentUser;
+    if (!user) {
+      user = await dataClient.getCurrentUser();
+    }
+    if (!user) {
+      showError('No user available for CDR export.');
+      return;
+    }
+
+    try {
+      const cdr = toCDR(session, station, connector, user);
+      const blob = new Blob([JSON.stringify(cdr, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cdr_${session.id}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      success('CDR downloaded.');
+    } catch (err) {
+      console.error('CDR export failed:', err);
+      showError('Could not export CDR.');
+    }
+  };
 
   const handleSubmitReview = async () => {
     if (!session || !rating) return;
@@ -433,6 +475,16 @@ export default function SessionCompletePage({ params }: Props) {
                 Skip
               </button>
             </div>
+            )}
+
+            {isDevEnv && (
+              <button
+                type="button"
+                onClick={handleDownloadCdr}
+                className="w-full h-[48px] rounded-lg border border-neutral-border bg-neutral-surface-2 text-sm font-semibold text-neutral-ink-2"
+              >
+                Download CDR
+              </button>
             )}
 
             <button
