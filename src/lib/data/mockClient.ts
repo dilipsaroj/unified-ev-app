@@ -173,6 +173,16 @@ const DEMO_USER: User = {
   createdAt: '2026-06-01T00:00:00Z',
 };
 
+/** CDR-related defaults applied to every mock session */
+const SESSION_CDR_DEFAULTS = {
+  vehicleId: DEMO_USER.vehicleId ?? undefined,
+  authMethod: 'APP_USER' as const,
+  totalParkingTime: 0,
+  cpoSessionRef: undefined as string | undefined,
+  currency: 'INR' as const,
+  gstPct: 18,
+};
+
 /* ─── Mock client implementation ─────────────────────────────────────────── */
 
 export const mockClient: DataClient = {
@@ -215,6 +225,7 @@ export const mockClient: DataClient = {
 
   async initiateSession(input: InitiateSessionInput) {
     await randomDelay();
+    const startedAt = new Date().toISOString();
     const session: Session = {
       id: `s-${Date.now()}`,
       userId: input.userId,
@@ -230,14 +241,17 @@ export const mockClient: DataClient = {
       capturedAmount: 0,
       refundAmount: 0,
       durationMins: 0,
-      startedAt: new Date().toISOString(),
+      startedAt,
       endedAt: null,
+      ...SESSION_CDR_DEFAULTS,
+      chargingPeriods: [],
     };
     return session;
   },
 
   async startSession(sessionId) {
     await randomDelay();
+    const startedAt = new Date().toISOString();
     return {
       id: sessionId,
       userId: DEMO_USER.id,
@@ -253,8 +267,10 @@ export const mockClient: DataClient = {
       capturedAmount: 0,
       refundAmount: 0,
       durationMins: 0,
-      startedAt: new Date().toISOString(),
+      startedAt,
       endedAt: null,
+      ...SESSION_CDR_DEFAULTS,
+      chargingPeriods: [],
     } as Session;
   },
 
@@ -265,6 +281,8 @@ export const mockClient: DataClient = {
     const costAccrued = energyKwh * pricePerKwh;
     const holdAmount = 500;
     const capturedAmount = Math.round((costAccrued + 7) * 100) / 100;
+    const startedAt = new Date(Date.now() - 42 * 60000).toISOString();
+    const endedAt = new Date().toISOString();
     return {
       id: sessionId,
       userId: DEMO_USER.id,
@@ -280,8 +298,10 @@ export const mockClient: DataClient = {
       capturedAmount,
       refundAmount: Math.round((holdAmount - capturedAmount) * 100) / 100,
       durationMins: 42,
-      startedAt: new Date(Date.now() - 42 * 60000).toISOString(),
-      endedAt: new Date().toISOString(),
+      startedAt,
+      endedAt,
+      ...SESSION_CDR_DEFAULTS,
+      chargingPeriods: [{ startedAt, energyKwh }],
     } as Session;
   },
 
@@ -291,6 +311,7 @@ export const mockClient: DataClient = {
       elapsed += 15;
       const energyKwh = Math.min(elapsed * 0.014, 30);
       const costAccrued = energyKwh * 18.5;
+      const startedAt = new Date(Date.now() - elapsed * 1000).toISOString();
       cb({
         id: sessionId,
         userId: DEMO_USER.id,
@@ -306,8 +327,10 @@ export const mockClient: DataClient = {
         capturedAmount: 0,
         refundAmount: 0,
         durationMins: elapsed / 60,
-        startedAt: new Date(Date.now() - elapsed * 1000).toISOString(),
+        startedAt,
         endedAt: null,
+        ...SESSION_CDR_DEFAULTS,
+        chargingPeriods: [{ startedAt, energyKwh }],
       });
     }, 1000);
     return () => clearInterval(interval);

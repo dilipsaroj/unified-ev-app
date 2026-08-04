@@ -1,6 +1,13 @@
 /* ─── Primitive enums ────────────────────────────────────────────────────── */
 
-export type ConnectorType = 'CCS_2' | 'TYPE_2_AC' | 'CHADEMO' | 'BHARAT_AC001' | 'BHARAT_DC001';
+export type ConnectorType =
+  | 'CCS_2'
+  | 'CHADEMO'
+  | 'TYPE_2_AC'
+  | 'BHARAT_AC_001' // India-specific low-power AC (for 2W/3W and budget 4W)
+  | 'BHARAT_DC_001'; // India-specific low-power DC (for 2W/3W and small 4W)
+
+export type VehicleClass = 'TWO_WHEELER' | 'THREE_WHEELER' | 'FOUR_WHEELER' | 'COMMERCIAL';
 
 export type ConnectorStatus = 'AVAILABLE' | 'OCCUPIED' | 'FAULTED' | 'UNAVAILABLE' | 'UNKNOWN';
 
@@ -106,6 +113,7 @@ export interface Vehicle {
   make: string;
   model: string;
   variant?: string;
+  vehicleClass: VehicleClass;
   batteryKwh: number;
   connectorType: ConnectorType;
   avgConsumptionWhPerKm: number;
@@ -140,6 +148,21 @@ export interface Session {
   endedAt: string | null;
   currentPowerKw?: number;
   currentSoc?: number;
+  /** Reference to user_vehicle — used for CDR / passport linkage */
+  vehicleId?: string;
+  authMethod?: 'APP_USER' | 'AD_HOC_USER';
+  /** Hours of parking billed (default 0) */
+  totalParkingTime?: number;
+  /** Periods for OCPI charging_periods array */
+  chargingPeriods?: {
+    startedAt: string;
+    energyKwh: number;
+  }[];
+  /** CPO's own session ID (null/undefined in V1 mock) */
+  cpoSessionRef?: string;
+  currency: 'INR';
+  /** GST percent applied to session cost (18 for V1) */
+  gstPct: number;
 }
 
 /** Historical charging session (from history.json) */

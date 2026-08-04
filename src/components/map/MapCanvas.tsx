@@ -14,7 +14,7 @@ interface Props {
 
 function primaryConnectorLetter(station: Station): 'D' | 'A' {
   const hasDC = station.connectors?.some(
-    (c) => c.type === 'CCS_2' || c.type === 'CHADEMO',
+    (c) => c.type === 'CCS_2' || c.type === 'CHADEMO' || c.type === 'BHARAT_DC_001',
   );
   return hasDC ? 'D' : 'A';
 }

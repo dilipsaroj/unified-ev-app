@@ -1,17 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ChevronDown, Zap, Battery } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Bike, Truck, Car } from 'lucide-react';
 import Link from 'next/link';
 import { dataClient } from '@/lib/data';
 import { useUserStore } from '@/stores/userStore';
-import type { Vehicle } from '@/lib/data/types';
+import type { Vehicle, VehicleClass } from '@/lib/data/types';
+
+const SEGMENTS: {
+  class: VehicleClass;
+  label: string;
+  icon: typeof Bike;
+}[] = [
+  { class: 'TWO_WHEELER', label: 'Two-wheeler', icon: Bike },
+  { class: 'THREE_WHEELER', label: 'Three-wheeler', icon: Truck },
+  { class: 'FOUR_WHEELER', label: 'Four-wheeler', icon: Car },
+];
 
 export default function OnboardingVehiclePage() {
   const router = useRouter();
-  const { currentUser, setVehicle } = useUserStore();
+  const { currentUser, setVehicle, setVehicleClass, vehicleClass } = useUserStore();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [selectedClass, setSelectedClass] = useState<VehicleClass | null>(vehicleClass);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [preferredChargePct, setPreferredChargePct] = useState(80);
   const [search, setSearch] = useState('');
@@ -31,11 +42,33 @@ export default function OnboardingVehiclePage() {
     loadVehicles();
   }, [currentUser, router]);
 
+  const classCounts = useMemo(() => {
+    const counts: Record<VehicleClass, number> = {
+      TWO_WHEELER: 0,
+      THREE_WHEELER: 0,
+      FOUR_WHEELER: 0,
+      COMMERCIAL: 0,
+    };
+    for (const v of vehicles) {
+      counts[v.vehicleClass] += 1;
+    }
+    return counts;
+  }, [vehicles]);
+
   const filteredVehicles = vehicles.filter((v) => {
+    if (selectedClass && v.vehicleClass !== selectedClass) return false;
     const searchLower = search.toLowerCase();
     const fullName = `${v.make} ${v.model} ${v.variant || ''}`.toLowerCase();
     return fullName.includes(searchLower);
   });
+
+  const handleSelectClass = (cls: VehicleClass) => {
+    setSelectedClass(cls);
+    setVehicleClass(cls);
+    setSelectedVehicle(null);
+    setSearch('');
+    setIsDropdownOpen(false);
+  };
 
   const handleContinue = () => {
     if (!selectedVehicle) return;
@@ -94,6 +127,34 @@ export default function OnboardingVehiclePage() {
         style={{ padding: 'var(--space-6)' }}
       >
         <div className="flex flex-col gap-6">
+          {/* Vehicle segment picker — Tailwind only */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium text-neutral-ink-2">Vehicle type</p>
+            <div className="grid grid-cols-3 gap-3">
+              {SEGMENTS.map(({ class: cls, label, icon: Icon }) => {
+                const isActive = selectedClass === cls;
+                const count = classCounts[cls];
+                return (
+                  <button
+                    key={cls}
+                    type="button"
+                    onClick={() => handleSelectClass(cls)}
+                    className={`flex flex-col items-center gap-2 rounded-lg border p-4 transition-colors ${
+                      isActive
+                        ? 'border-brand-500 bg-brand-50 text-brand-900'
+                        : 'border-neutral-border bg-neutral-surface text-neutral-ink-2'
+                    }`}
+                  >
+                    <Icon size={28} className={isActive ? 'text-brand-500' : 'text-neutral-ink-3'} />
+                    <span className="text-xs font-semibold text-center leading-tight">{label}</span>
+                    <span className="text-xs text-neutral-ink-3">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {selectedClass && (
           <div className="flex flex-col gap-2">
             <label
               htmlFor="vehicle"
@@ -196,6 +257,7 @@ export default function OnboardingVehiclePage() {
               )}
             </div>
           </div>
+          )}
 
           {selectedVehicle && (
             <>

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { X, CreditCard, Building2, Wallet } from 'lucide-react';
+import Image from 'next/image';
+import { X, CreditCard } from 'lucide-react';
 import type { Station, Connector } from '@/lib/data/types';
 
 interface PaymentSheetProps {
@@ -175,54 +176,46 @@ export default function PaymentSheet({ station, connector, onApprove, onCancel }
               Payment method
             </div>
 
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            <div className="mb-4 flex flex-col gap-2">
               <button
+                type="button"
                 onClick={() => setSelectedMethod('UPI')}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  background: selectedMethod === 'UPI' ? 'var(--color-brand-500)' : 'var(--color-surface)',
-                  color: selectedMethod === 'UPI' ? 'white' : 'var(--color-ink)',
-                  border: selectedMethod === 'UPI' ? 'none' : '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                }}
+                className={`rounded-md border px-4 py-3 text-left text-sm font-medium ${
+                  selectedMethod === 'UPI'
+                    ? 'border-brand-500 bg-brand-500 text-white'
+                    : 'border-neutral-border bg-neutral-surface text-neutral-ink'
+                }`}
               >
                 UPI
               </button>
               <button
+                type="button"
                 onClick={() => setSelectedMethod('CARD')}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  background: selectedMethod === 'CARD' ? 'var(--color-brand-500)' : 'var(--color-surface)',
-                  color: selectedMethod === 'CARD' ? 'white' : 'var(--color-ink)',
-                  border: selectedMethod === 'CARD' ? 'none' : '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                }}
+                className={`rounded-md border px-4 py-3 text-left text-sm font-medium ${
+                  selectedMethod === 'CARD'
+                    ? 'border-brand-500 bg-brand-500 text-white'
+                    : 'border-neutral-border bg-neutral-surface text-neutral-ink'
+                }`}
               >
-                Card
+                Card (Visa / Mastercard / RuPay)
               </button>
               <button
+                type="button"
                 onClick={() => setSelectedMethod('NETBANKING')}
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  background: selectedMethod === 'NETBANKING' ? 'var(--color-brand-500)' : 'var(--color-surface)',
-                  color: selectedMethod === 'NETBANKING' ? 'white' : 'var(--color-ink)',
-                  border: selectedMethod === 'NETBANKING' ? 'none' : '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                }}
+                className={`rounded-md border px-4 py-3 text-left text-sm font-medium ${
+                  selectedMethod === 'NETBANKING'
+                    ? 'border-brand-500 bg-brand-500 text-white'
+                    : 'border-neutral-border bg-neutral-surface text-neutral-ink'
+                }`}
               >
-                Bank
+                Netbanking
+              </button>
+              <button
+                type="button"
+                disabled
+                className="cursor-not-allowed rounded-md border border-neutral-border bg-neutral-surface-2 px-4 py-3 text-left text-sm font-medium text-neutral-ink-4 opacity-60"
+              >
+                Wallets (coming soon)
               </button>
             </div>
 
@@ -280,6 +273,17 @@ export default function PaymentSheet({ station, connector, onApprove, onCancel }
                   gap: 12,
                 }}
               >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-neutral-ink-3">Accepted</span>
+                  <Image
+                    src="/payment-methods/rupay.svg"
+                    alt="RuPay"
+                    width={56}
+                    height={18}
+                    className="h-[18px] w-auto"
+                  />
+                  <span className="text-xs text-neutral-ink-3">Visa · Mastercard</span>
+                </div>
                 <button
                   style={{
                     padding: '14px',

@@ -22,9 +22,11 @@ export function StationCard({ station, onClick }: Props) {
   const cpoColor = station.cpo ? CPO_COLORS[station.cpo.id] ?? '#6B7684' : '#6B7684';
   const cpoName = station.cpo?.name ?? station.cpoId;
 
-  const dcConnector = station.connectors?.find((c) => c.type === 'CCS_2' || c.type === 'CHADEMO');
+  const dcConnector = station.connectors?.find(
+    (c) => c.type === 'CCS_2' || c.type === 'CHADEMO' || c.type === 'BHARAT_DC_001',
+  );
   const acConnector = station.connectors?.find(
-    (c) => c.type === 'TYPE_2_AC' || c.type === 'BHARAT_AC001',
+    (c) => c.type === 'TYPE_2_AC' || c.type === 'BHARAT_AC_001',
   );
   const primaryConnector = dcConnector ?? acConnector;
   

@@ -2,34 +2,17 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, Vehicle } from '@/lib/data/types';
-
-const DEMO_USER: User = {
-  id: 'demo-user',
-  phone: '+91 98765 43210',
-  name: 'Rohan Mehta',
-  vehicleId: 'tata-nexon-ev',
-  createdAt: '2026-06-01T00:00:00Z',
-};
-
-const DEMO_VEHICLE: Vehicle = {
-  id: 'tata-nexon-ev-max',
-  make: 'Tata',
-  model: 'Nexon EV Max',
-  batteryKwh: 40.5,
-  connectorType: 'CCS_2',
-  avgConsumptionWhPerKm: 150,
-  maxChargeRateKw: 50,
-  preferredChargeToPct: 80,
-};
+import type { User, Vehicle, VehicleClass } from '@/lib/data/types';
 
 interface UserStore {
   currentUser: User | null;
   currentVehicle: Vehicle | null;
+  vehicleClass: VehicleClass | null;
   isAuthenticated: boolean;
   login: (user: User, vehicle?: Vehicle) => void;
   logout: () => void;
   setVehicle: (vehicle: Vehicle) => void;
+  setVehicleClass: (vehicleClass: VehicleClass) => void;
 }
 
 export const useUserStore = create<UserStore>()(
@@ -37,18 +20,33 @@ export const useUserStore = create<UserStore>()(
     (set) => ({
       currentUser: null,
       currentVehicle: null,
+      vehicleClass: null,
       isAuthenticated: false,
 
       login(user, vehicle) {
-        set({ currentUser: user, currentVehicle: vehicle ?? null, isAuthenticated: true });
+        set({
+          currentUser: user,
+          currentVehicle: vehicle ?? null,
+          vehicleClass: vehicle?.vehicleClass ?? null,
+          isAuthenticated: true,
+        });
       },
 
       logout() {
-        set({ currentUser: null, currentVehicle: null, isAuthenticated: false });
+        set({
+          currentUser: null,
+          currentVehicle: null,
+          vehicleClass: null,
+          isAuthenticated: false,
+        });
       },
 
       setVehicle(vehicle) {
-        set({ currentVehicle: vehicle });
+        set({ currentVehicle: vehicle, vehicleClass: vehicle.vehicleClass });
+      },
+
+      setVehicleClass(vehicleClass) {
+        set({ vehicleClass });
       },
     }),
     {

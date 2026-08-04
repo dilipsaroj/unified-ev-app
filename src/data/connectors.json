@@ -8,18 +8,18 @@
   { "id": "statiq-powai-01-c1", "stationId": "statiq-powai-01", "cpoId": "statiq", "identifier": "C1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 18.0, "status": "AVAILABLE" },
   { "id": "statiq-powai-01-c2", "stationId": "statiq-powai-01", "cpoId": "statiq", "identifier": "C2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 14.5, "status": "AVAILABLE" },
 
-  { "id": "hpcl-dadar-01-c1", "stationId": "hpcl-dadar-01", "cpoId": "hpcl", "identifier": "D1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 20.0, "status": "FAULTED" },
+  { "id": "hpcl-dadar-01-c1", "stationId": "hpcl-dadar-01", "cpoId": "hpcl", "identifier": "D1", "type": "BHARAT_DC_001", "maxPowerKw": 15, "pricePerKwh": 10.0, "status": "AVAILABLE" },
   { "id": "hpcl-dadar-01-c2", "stationId": "hpcl-dadar-01", "cpoId": "hpcl", "identifier": "D2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 15.5, "status": "AVAILABLE" },
 
-  { "id": "iocl-thane-01-c1", "stationId": "iocl-thane-01", "cpoId": "iocl", "identifier": "E1", "type": "CCS_2", "maxPowerKw": 30, "pricePerKwh": 16.5, "status": "AVAILABLE" },
+  { "id": "iocl-thane-01-c1", "stationId": "iocl-thane-01", "cpoId": "iocl", "identifier": "E1", "type": "BHARAT_DC_001", "maxPowerKw": 7.5, "pricePerKwh": 9.0, "status": "AVAILABLE" },
   { "id": "iocl-thane-01-c2", "stationId": "iocl-thane-01", "cpoId": "iocl", "identifier": "E2", "type": "TYPE_2_AC", "maxPowerKw": 7, "pricePerKwh": 12.0, "status": "AVAILABLE" },
 
   { "id": "bpcl-worli-01-c1", "stationId": "bpcl-worli-01", "cpoId": "bpcl", "identifier": "F1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 21.0, "status": "AVAILABLE" },
-  { "id": "bpcl-worli-01-c2", "stationId": "bpcl-worli-01", "cpoId": "bpcl", "identifier": "F2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 16.0, "status": "UNAVAILABLE" },
+  { "id": "bpcl-worli-01-c2", "stationId": "bpcl-worli-01", "cpoId": "bpcl", "identifier": "F2", "type": "BHARAT_AC_001", "maxPowerKw": 3.3, "pricePerKwh": 7.0, "status": "AVAILABLE" },
 
   { "id": "tp-lower-parel-01-c1", "stationId": "tp-lower-parel-01", "cpoId": "tata-power", "identifier": "G1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 18.5, "status": "AVAILABLE" },
   { "id": "tp-lower-parel-01-c2", "stationId": "tp-lower-parel-01", "cpoId": "tata-power", "identifier": "G2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 14.2, "status": "OCCUPIED" },
 
   { "id": "statiq-vashi-01-c1", "stationId": "statiq-vashi-01", "cpoId": "statiq", "identifier": "H1", "type": "CCS_2", "maxPowerKw": 50, "pricePerKwh": 17.5, "status": "AVAILABLE" },
-  { "id": "statiq-vashi-01-c2", "stationId": "statiq-vashi-01", "cpoId": "statiq", "identifier": "H2", "type": "TYPE_2_AC", "maxPowerKw": 22, "pricePerKwh": 13.5, "status": "AVAILABLE" }
+  { "id": "statiq-vashi-01-c2", "stationId": "statiq-vashi-01", "cpoId": "statiq", "identifier": "H2", "type": "BHARAT_AC_001", "maxPowerKw": 3.3, "pricePerKwh": 8.5, "status": "AVAILABLE" }
 ]

@@ -1,6 +1,7 @@
 'use client';
 
-import { User } from 'lucide-react';
+import Link from 'next/link';
+import { ChevronRight, User } from 'lucide-react';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { useUserStore } from '@/stores/userStore';
 
@@ -74,6 +75,61 @@ export default function ProfilePage() {
           Appearance
         </p>
         <ThemeToggle />
+      </div>
+
+      {/* Help & Support — WhatsApp */}
+      <div>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-ink-3">
+          Help & Support
+        </p>
+        {/* TODO: Replace with real WhatsApp Business number when registered */}
+        <a
+          href="https://wa.me/91XXXXXXXXXX?text=Hi%20Unified-EV%20team%2C%20I%20need%20help%20with%20..."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start gap-3 rounded-lg border border-neutral-border bg-neutral-surface-2 p-4 transition-opacity active:opacity-80"
+        >
+          <span className="text-h3 leading-none" aria-hidden>
+            💬
+          </span>
+          <span className="flex flex-col gap-0.5">
+            <span className="text-body font-semibold text-neutral-ink">Get help on WhatsApp</span>
+            <span className="text-sm text-neutral-ink-3">Typical reply in 2 hours (9am–9pm)</span>
+          </span>
+        </a>
+
+        <p className="mb-2 mt-6 text-xs font-semibold uppercase tracking-wide text-neutral-ink-3">
+          Legal
+        </p>
+        <div className="overflow-hidden rounded-lg border border-neutral-border bg-neutral-surface-2">
+          <Link
+            href="/policies/refund"
+            className="flex items-center justify-between px-4 py-3.5 transition-opacity active:opacity-80"
+          >
+            <span className="text-body text-neutral-ink">Refund Policy</span>
+            <ChevronRight size={18} className="text-neutral-ink-3" />
+          </Link>
+          <div className="border-t border-neutral-border" />
+          <a
+            href="#"
+            className="flex items-center justify-between px-4 py-3.5 text-neutral-ink-3"
+            onClick={(e) => e.preventDefault()}
+            aria-disabled
+          >
+            <span className="text-body">Privacy Policy</span>
+            <ChevronRight size={18} />
+          </a>
+          <div className="border-t border-neutral-border" />
+          <a
+            href="#"
+            className="flex items-center justify-between px-4 py-3.5 text-neutral-ink-3"
+            onClick={(e) => e.preventDefault()}
+            aria-disabled
+          >
+            <span className="text-body">Terms of Service</span>
+            <ChevronRight size={18} />
+          </a>
+        </div>
       </div>
     </div>
   );
