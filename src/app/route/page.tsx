@@ -17,7 +17,7 @@ export default function RoutePage() {
   const [stations, setStations] = useState<Station[]>([]);
   const [showAlternatives, setShowAlternatives] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [planning, setPlanning] = useState(false);
+  const [plannedRoute, setPlannedRoute] = useState<PreGeneratedRoute | null>(null);
 
   useEffect(() => {
     async function loadData() {
@@ -43,23 +43,19 @@ export default function RoutePage() {
 
   const handlePlanTrip = () => {
     if (!selectedRoute) return;
-    setPlanning(true);
-    // Simulate planning delay
-    setTimeout(() => {
-      setPlanning(false);
-    }, 800);
+    setPlannedRoute(selectedRoute);
   };
 
   const handleStartNavigation = () => {
-    if (!selectedRoute) return;
-    const { originCoords, destinationCoords } = selectedRoute;
+    if (!plannedRoute) return;
+    const { originCoords, destinationCoords } = plannedRoute;
     const url = `https://www.google.com/maps/dir/?api=1&origin=${originCoords.lat},${originCoords.lng}&destination=${destinationCoords.lat},${destinationCoords.lng}&travelmode=driving`;
     window.open(url, '_blank');
   };
 
-  const chargingStop = stations.find((s) => s.id === selectedRoute?.chargingStopStationId);
+  const chargingStop = stations.find((s) => s.id === plannedRoute?.chargingStopStationId);
   const alternativeStops = stations.filter((s) =>
-    selectedRoute?.alternativeStationIds.includes(s.id),
+    (plannedRoute?.alternativeStationIds ?? []).includes(s.id),
   );
 
   if (loading) {
@@ -84,7 +80,7 @@ export default function RoutePage() {
     );
   }
 
-  const showMap = planning || (selectedRoute && selectedRoute !== null);
+  const showMap = plannedRoute !== null || selectedRoute !== null;
 
   return (
     <div className="flex h-full min-h-0 flex-col" style={{ background: 'var(--color-bg)' }}>
@@ -157,7 +153,7 @@ export default function RoutePage() {
                 onChange={(e) => {
                   const route = routes.find((r) => r.id === e.target.value);
                   setSelectedRoute(route || null);
-                  setPlanning(false);
+                  setPlannedRoute(null);
                   setShowAlternatives(false);
                 }}
                 style={{
@@ -226,7 +222,7 @@ export default function RoutePage() {
           </div>
 
           {/* Plan trip button */}
-          {!planning && (
+          {plannedRoute === null && (
             <button
               onClick={handlePlanTrip}
               style={{
@@ -256,11 +252,14 @@ export default function RoutePage() {
           <>
             {/* Map */}
             <div style={{ height: 300, position: 'relative' }}>
-              <RouteMap route={selectedRoute!} chargingStop={chargingStop} />
+              <RouteMap
+                route={plannedRoute ?? selectedRoute!}
+                chargingStop={plannedRoute ? chargingStop : undefined}
+              />
             </div>
 
             {/* Route summary */}
-            {planning && selectedRoute && (
+            {plannedRoute !== null && (
               <div className="p-4 space-y-3">
                 {/* Summary card */}
                 <div
@@ -279,7 +278,7 @@ export default function RoutePage() {
                         Distance
                       </p>
                       <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>
-                        {selectedRoute.distanceKm} km
+                        {plannedRoute.distanceKm} km
                       </p>
                     </div>
                     <div>
@@ -289,8 +288,8 @@ export default function RoutePage() {
                         Duration
                       </p>
                       <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>
-                        {Math.floor(selectedRoute.durationMins / 60)}h{' '}
-                        {selectedRoute.durationMins % 60}m
+                        {Math.floor(plannedRoute.durationMins / 60)}h{' '}
+                        {plannedRoute.durationMins % 60}m
                       </p>
                     </div>
                     <div>

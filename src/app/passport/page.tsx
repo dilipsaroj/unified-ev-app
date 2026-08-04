@@ -180,6 +180,9 @@ export default function PassportPage() {
         </button>
 
         <p style={{ fontSize: 12, opacity: 0.7, marginBottom: 4 }}>Charging Passport</p>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginBottom: 4 }}>
+          Your charging history
+        </p>
         <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20 }}>
           {userName}&apos;s {vehicleModel}
         </h1>

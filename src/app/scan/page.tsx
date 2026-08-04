@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { X } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
 
@@ -12,14 +13,11 @@ function ScanContent() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [cameraError, setCameraError] = useState(false);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
-  
+
   const stationId = searchParams.get('stationId');
 
   useEffect(() => {
-    if (!stationId) {
-      router.push('/map');
-      return;
-    }
+    if (!stationId) return;
 
     let stream: MediaStream | null = null;
 
@@ -50,11 +48,49 @@ function ScanContent() {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [stationId, router, warning]);
+  }, [stationId, warning]);
 
   const handleCancel = () => {
     router.back();
   };
+
+  if (!stationId) {
+    return (
+      <div
+        className="flex flex-1 flex-col items-center justify-center gap-4 px-6"
+        style={{ background: 'var(--color-bg)', paddingBottom: 80 }}
+      >
+        <p
+          style={{
+            fontSize: 15,
+            lineHeight: 1.5,
+            color: 'var(--color-ink-2)',
+            textAlign: 'center',
+            maxWidth: 280,
+          }}
+        >
+          Tap a station on the map, then choose Scan to Charge.
+        </p>
+        <Link
+          href="/map"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '12px 24px',
+            background: 'var(--color-brand-500)',
+            color: 'white',
+            borderRadius: 8,
+            fontSize: 15,
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          Open map
+        </Link>
+      </div>
+    );
+  }
 
   if (showPaymentSheet) {
     router.push(`/scan/payment?stationId=${stationId}`);
