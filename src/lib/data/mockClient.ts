@@ -38,7 +38,19 @@ const connectors = rawConnectors as Connector[];
 const reliabilityData = rawReliability as ReliabilityScore[];
 const reviews = rawReviews as Review[];
 const photos = rawPhotos as Photo[];
-const vehicles = rawVehicles as Vehicle[];
+/** Explicit field pick so vehicleClass cannot be dropped by a partial map/cast. */
+const vehicles: Vehicle[] = (rawVehicles as Vehicle[]).map((v) => ({
+  id: v.id,
+  make: v.make,
+  model: v.model,
+  variant: v.variant,
+  vehicleClass: v.vehicleClass,
+  batteryKwh: v.batteryKwh,
+  connectorType: v.connectorType,
+  avgConsumptionWhPerKm: v.avgConsumptionWhPerKm,
+  maxChargeRateKw: v.maxChargeRateKw,
+  preferredChargeToPct: v.preferredChargeToPct,
+}));
 const routes = rawRoutes as PreGeneratedRoute[];
 const chargingHistory = rawHistory as ChargingHistory[];
 
@@ -169,13 +181,14 @@ const DEMO_USER: User = {
   id: 'demo-user',
   phone: '+91 98765 43210',
   name: 'Rohan Mehta',
-  vehicleId: 'tata-nexon-ev',
+  // null so OTP → /onboarding/vehicle (segment picker) instead of skipping to /map
+  vehicleId: null,
   createdAt: '2026-06-01T00:00:00Z',
 };
 
 /** CDR-related defaults applied to every mock session */
 const SESSION_CDR_DEFAULTS = {
-  vehicleId: DEMO_USER.vehicleId ?? undefined,
+  vehicleId: 'tata-nexon-ev-max' as string | undefined,
   authMethod: 'APP_USER' as const,
   totalParkingTime: 0,
   cpoSessionRef: undefined as string | undefined,

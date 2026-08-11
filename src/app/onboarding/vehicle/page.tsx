@@ -9,13 +9,13 @@ import { useUserStore } from '@/stores/userStore';
 import type { Vehicle, VehicleClass } from '@/lib/data/types';
 
 const SEGMENTS: {
-  class: VehicleClass;
+  vehicleClass: VehicleClass;
   label: string;
   icon: typeof Bike;
 }[] = [
-  { class: 'TWO_WHEELER', label: 'Two-wheeler', icon: Bike },
-  { class: 'THREE_WHEELER', label: 'Three-wheeler', icon: Truck },
-  { class: 'FOUR_WHEELER', label: 'Four-wheeler', icon: Car },
+  { vehicleClass: 'TWO_WHEELER', label: 'Two-wheeler', icon: Bike },
+  { vehicleClass: 'THREE_WHEELER', label: 'Three-wheeler', icon: Truck },
+  { vehicleClass: 'FOUR_WHEELER', label: 'Four-wheeler', icon: Car },
 ];
 
 export default function OnboardingVehiclePage() {
@@ -50,7 +50,8 @@ export default function OnboardingVehiclePage() {
       COMMERCIAL: 0,
     };
     for (const v of vehicles) {
-      counts[v.vehicleClass] += 1;
+      const cls = v.vehicleClass;
+      if (cls && cls in counts) counts[cls] += 1;
     }
     return counts;
   }, [vehicles]);
@@ -129,16 +130,21 @@ export default function OnboardingVehiclePage() {
         <div className="flex flex-col gap-6">
           {/* Vehicle segment picker — Tailwind only */}
           <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium text-neutral-ink-2">Vehicle type</p>
+            <p className="text-sm font-medium" style={{ color: 'var(--color-ink-2)' }}>
+              Vehicle type
+            </p>
+            <p className="text-xs" style={{ color: 'var(--color-ink-3)', marginBottom: 4 }}>
+              Select your vehicle type to get started
+            </p>
             <div className="grid grid-cols-3 gap-3">
-              {SEGMENTS.map(({ class: cls, label, icon: Icon }) => {
-                const isActive = selectedClass === cls;
-                const count = classCounts[cls];
+              {SEGMENTS.map(({ vehicleClass: segmentClass, label, icon: Icon }) => {
+                const isActive = selectedClass === segmentClass;
+                const count = classCounts[segmentClass];
                 return (
                   <button
-                    key={cls}
+                    key={segmentClass}
                     type="button"
-                    onClick={() => handleSelectClass(cls)}
+                    onClick={() => handleSelectClass(segmentClass)}
                     className={`flex flex-col items-center gap-2 rounded-lg border p-4 transition-colors ${
                       isActive
                         ? 'border-brand-500 bg-brand-50 text-brand-900'
@@ -184,7 +190,10 @@ export default function OnboardingVehiclePage() {
                   fontSize: 15,
                   color: 'var(--color-ink)',
                   background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
+                  border:
+                    selectedClass && !selectedVehicle
+                      ? '1.5px solid var(--color-brand-500)'
+                      : '1px solid var(--color-border)',
                   borderRadius: 'var(--radius-md)',
                   outline: 'none',
                 }}
