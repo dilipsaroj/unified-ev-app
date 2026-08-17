@@ -1,12 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   Map,
-  APIProvider,
   AdvancedMarker,
   useMap,
-  useMapsLibrary,
 } from '@vis.gl/react-google-maps';
 import type { PreGeneratedRoute, Station } from '@/lib/data/types';
 import { Zap } from 'lucide-react';
@@ -19,43 +17,93 @@ interface Props {
 const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
-function RoutePolyline({ route }: { route: PreGeneratedRoute }) {
+const POLYLINE_STYLE: google.maps.PolylineOptions = {
+  strokeColor: '#10B981',
+  strokeOpacity: 1,
+  strokeWeight: 4,
+};
+
+function fallbackPath(route: PreGeneratedRoute, chargingStop?: Station): google.maps.LatLngLiteral[] {
+  return [
+    route.originCoords,
+    ...(chargingStop ? [chargingStop.coordinates] : []),
+    route.destinationCoords,
+  ];
+}
+
+function fitToPath(map: google.maps.Map, path: google.maps.LatLngLiteral[]) {
+  const bounds = new google.maps.LatLngBounds();
+  path.forEach((p) => bounds.extend(p));
+  map.fitBounds(bounds, { top: 40, bottom: 40, left: 40, right: 40 });
+}
+
+function RoutePolyline({
+  route,
+  chargingStop,
+}: {
+  route: PreGeneratedRoute;
+  chargingStop?: Station;
+}) {
   const map = useMap();
-  const geometryLibrary = useMapsLibrary('geometry');
-  const [polyline, setPolyline] = useState<any>(null);
+  const rendererRef = useRef<google.maps.DirectionsRenderer | null>(null);
+  const fallbackRef = useRef<google.maps.Polyline | null>(null);
 
   useEffect(() => {
-    if (!map || !geometryLibrary) return;
+    if (!map || !window.google?.maps) return;
 
-    // @ts-ignore - Google Maps API is loaded dynamically
-    if (!window.google) return;
+    let cancelled = false;
 
-    // Decode the polyline
-    // @ts-ignore
-    const decodedPath = window.google.maps.geometry.encoding.decodePath(route.polylineEncoded);
+    const clearOverlays = () => {
+      rendererRef.current?.setMap(null);
+      rendererRef.current = null;
+      fallbackRef.current?.setMap(null);
+      fallbackRef.current = null;
+    };
 
-    // Create the polyline
-    // @ts-ignore
-    const newPolyline = new window.google.maps.Polyline({
-      path: decodedPath,
-      strokeColor: '#10B981', // Brand mint
-      strokeOpacity: 1,
-      strokeWeight: 4,
-      map,
+    const drawFallback = () => {
+      if (cancelled) return;
+      clearOverlays();
+      const path = fallbackPath(route, chargingStop);
+      fallbackRef.current = new google.maps.Polyline({
+        path,
+        ...POLYLINE_STYLE,
+        map,
+      });
+      fitToPath(map, path);
+    };
+
+    const service = new google.maps.DirectionsService();
+    const request: google.maps.DirectionsRequest = {
+      origin: route.originCoords,
+      destination: route.destinationCoords,
+      travelMode: google.maps.TravelMode.DRIVING,
+    };
+    if (chargingStop) {
+      request.waypoints = [{ location: chargingStop.coordinates, stopover: true }];
+    }
+
+    service.route(request, (result, status) => {
+      if (cancelled) return;
+      if (status !== google.maps.DirectionsStatus.OK || !result) {
+        drawFallback();
+        return;
+      }
+      clearOverlays();
+      const renderer = new google.maps.DirectionsRenderer({
+        map,
+        suppressMarkers: true,
+        preserveViewport: false,
+        polylineOptions: POLYLINE_STYLE,
+      });
+      renderer.setDirections(result);
+      rendererRef.current = renderer;
     });
 
-    setPolyline(newPolyline);
-
-    // Fit bounds to show the entire route
-    // @ts-ignore
-    const bounds = new window.google.maps.LatLngBounds();
-    decodedPath.forEach((point: any) => bounds.extend(point));
-    map.fitBounds(bounds, { top: 20, bottom: 20, left: 20, right: 20 });
-
     return () => {
-      newPolyline.setMap(null);
+      cancelled = true;
+      clearOverlays();
     };
-  }, [map, geometryLibrary, route]);
+  }, [map, route, chargingStop]);
 
   return null;
 }
@@ -63,9 +111,8 @@ function RoutePolyline({ route }: { route: PreGeneratedRoute }) {
 function MapContent({ route, chargingStop }: Props) {
   return (
     <>
-      <RoutePolyline route={route} />
+      <RoutePolyline route={route} chargingStop={chargingStop} />
 
-      {/* Origin marker */}
       <AdvancedMarker position={route.originCoords} zIndex={2}>
         <div
           style={{
@@ -86,7 +133,6 @@ function MapContent({ route, chargingStop }: Props) {
         </div>
       </AdvancedMarker>
 
-      {/* Destination marker */}
       <AdvancedMarker position={route.destinationCoords} zIndex={2}>
         <div
           style={{
@@ -107,7 +153,6 @@ function MapContent({ route, chargingStop }: Props) {
         </div>
       </AdvancedMarker>
 
-      {/* Charging stop marker (if available) */}
       {chargingStop && (
         <AdvancedMarker position={chargingStop.coordinates} zIndex={3}>
           <div
@@ -153,18 +198,16 @@ export function RouteMap({ route, chargingStop }: Props) {
   }
 
   return (
-    <APIProvider apiKey={API_KEY} libraries={['geometry', 'marker']}>
-      <Map
-        defaultCenter={route.originCoords}
-        defaultZoom={8}
-        gestureHandling="greedy"
-        disableDefaultUI
-        mapTypeId="roadmap"
-        className="w-full h-full"
-        mapId={MAP_ID}
-      >
-        <MapContent route={route} chargingStop={chargingStop} />
-      </Map>
-    </APIProvider>
+    <Map
+      defaultCenter={route.originCoords}
+      defaultZoom={8}
+      gestureHandling="greedy"
+      disableDefaultUI
+      mapTypeId="roadmap"
+      mapId={MAP_ID}
+      style={{ width: '100%', height: '100%' }}
+    >
+      <MapContent route={route} chargingStop={chargingStop} />
+    </Map>
   );
 }

@@ -1,90 +1,109 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Settings, Navigation as NavigationIcon, Zap, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Settings, Navigation as NavigationIcon, Zap, ChevronRight } from 'lucide-react';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import { dataClient } from '@/lib/data';
 import type { PreGeneratedRoute, Station } from '@/lib/data/types';
-import { Skeleton } from '@/components/ui/Skeleton';
 import { RouteMap } from '@/components/route/RouteMap';
+import { PlaceSearchField, type PlaceSearchHandle, type PlaceValue } from '@/components/route/PlaceSearchField';
 import { useToast } from '@/hooks/useToast';
+import { alongSegment, haversineKm } from '@/lib/geo';
+
+const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
+
+function pickStopsAlongTrip(stations: Station[], origin: PlaceValue, dest: PlaceValue): Station[] {
+  const originLL = { lat: origin.lat, lng: origin.lng };
+  const destLL = { lat: dest.lat, lng: dest.lng };
+  const scored = stations.map((s) => {
+    const { t, offsetKm } = alongSegment(s.coordinates, originLL, destLL);
+    return { s, t, offsetKm };
+  });
+  const along = scored
+    .filter((x) => x.t > 0.12 && x.t < 0.88 && x.offsetKm < 45)
+    .sort((a, b) => Math.abs(a.t - 0.5) - Math.abs(b.t - 0.5) || a.offsetKm - b.offsetKm)
+    .map((x) => x.s);
+  if (along.length >= 3) return along.slice(0, 3);
+  const rest = scored
+    .filter((x) => !along.includes(x.s))
+    .sort((a, b) => a.offsetKm - b.offsetKm)
+    .map((x) => x.s);
+  return [...along, ...rest].slice(0, 3);
+}
 
 export default function RoutePage() {
   const router = useRouter();
   const { error } = useToast();
-  const [routes, setRoutes] = useState<PreGeneratedRoute[]>([]);
-  const [selectedRoute, setSelectedRoute] = useState<PreGeneratedRoute | null>(null);
+  const originRef = useRef<PlaceSearchHandle>(null);
+  const destRef = useRef<PlaceSearchHandle>(null);
+  const [origin, setOrigin] = useState<PlaceValue | null>(null);
+  const [destination, setDestination] = useState<PlaceValue | null>(null);
+  const [originQuery, setOriginQuery] = useState('');
+  const [destQuery, setDestQuery] = useState('');
   const [stations, setStations] = useState<Station[]>([]);
   const [showAlternatives, setShowAlternatives] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [planning, setPlanning] = useState(false);
   const [plannedRoute, setPlannedRoute] = useState<PreGeneratedRoute | null>(null);
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [routesData, stationsData] = await Promise.all([
-          dataClient.getPreGeneratedRoutes(),
-          dataClient.getStationsNear(19.076, 72.877, 500), // Get all stations
-        ]);
-        setRoutes(routesData);
-        setStations(stationsData);
-        if (routesData.length > 0) {
-          setSelectedRoute(routesData[0]);
-        }
-      } catch (err) {
-        console.error('Failed to load routes:', err);
-        error('Failed to load routes. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, [error]);
-
-  const handlePlanTrip = () => {
-    if (!selectedRoute) return;
-    setPlannedRoute(selectedRoute);
-  };
-
-  const handleStartNavigation = () => {
-    if (!plannedRoute) return;
-    const { originCoords, destinationCoords } = plannedRoute;
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${originCoords.lat},${originCoords.lng}&destination=${destinationCoords.lat},${destinationCoords.lng}&travelmode=driving`;
-    window.open(url, '_blank');
-  };
 
   const chargingStop = stations.find((s) => s.id === plannedRoute?.chargingStopStationId);
   const alternativeStops = stations.filter((s) =>
     (plannedRoute?.alternativeStationIds ?? []).includes(s.id),
   );
 
-  if (loading) {
-    return (
-      <div className="flex flex-1 flex-col" style={{ background: 'var(--color-bg)' }}>
-        {/* Header skeleton */}
-        <div
-          className="flex items-center justify-between px-4 py-3"
-          style={{ borderBottom: '1px solid var(--color-border)' }}
-        >
-          <Skeleton width={24} height={24} circle />
-          <Skeleton width={120} height={20} />
-          <Skeleton width={24} height={24} circle />
-        </div>
-        {/* Content skeleton */}
-        <div className="flex-1 p-4 space-y-4">
-          <Skeleton height={48} rounded />
-          <Skeleton height={48} rounded />
-          <Skeleton height={200} rounded />
-        </div>
-      </div>
-    );
+  async function handlePlanTrip() {
+    const resolvedOrigin = (await originRef.current?.resolve()) ?? origin;
+    const resolvedDest = (await destRef.current?.resolve()) ?? destination;
+    if (!resolvedOrigin || !resolvedDest) {
+      error('Enter an origin and destination, then pick a suggestion or tap Plan trip again.');
+      return;
+    }
+    setOrigin(resolvedOrigin);
+    setDestination(resolvedDest);
+    setPlanning(true);
+    setShowAlternatives(false);
+    try {
+      const roadKm = haversineKm(resolvedOrigin, resolvedDest) * 1.25;
+      const mid = {
+        lat: (resolvedOrigin.lat + resolvedDest.lat) / 2,
+        lng: (resolvedOrigin.lng + resolvedDest.lng) / 2,
+      };
+      const nearby = await dataClient.getStationsNear(mid.lat, mid.lng, Math.max(roadKm, 80));
+      const stops = pickStopsAlongTrip(nearby, resolvedOrigin, resolvedDest);
+      const [recommended, ...alts] = stops;
+      setStations(stops);
+      setPlannedRoute({
+        id: `trip-${resolvedOrigin.lat}-${resolvedDest.lat}`,
+        originName: resolvedOrigin.name,
+        originCoords: { lat: resolvedOrigin.lat, lng: resolvedOrigin.lng },
+        destinationName: resolvedDest.name,
+        destinationCoords: { lat: resolvedDest.lat, lng: resolvedDest.lng },
+        distanceKm: Math.round(roadKm),
+        durationMins: Math.max(15, Math.round((roadKm / 55) * 60)),
+        polylineEncoded: '',
+        chargingStopStationId: recommended?.id ?? '',
+        alternativeStationIds: alts.map((s) => s.id),
+      });
+    } catch (err) {
+      console.error(err);
+      error('Could not plan this trip. Try another origin or destination.');
+    } finally {
+      setPlanning(false);
+    }
   }
 
-  const showMap = plannedRoute !== null || selectedRoute !== null;
+  function handleStartNavigation() {
+    if (!plannedRoute) return;
+    const { originCoords, destinationCoords } = plannedRoute;
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${originCoords.lat},${originCoords.lng}&destination=${destinationCoords.lat},${destinationCoords.lng}&travelmode=driving`;
+    window.open(url, '_blank');
+  }
 
-  return (
+  const canPlan =
+    originQuery.trim().length >= 2 && destQuery.trim().length >= 2 && !planning;
+
+  const form = (
     <div className="flex h-full min-h-0 flex-col" style={{ background: 'var(--color-bg)' }}>
-      {/* Header */}
       <div
         className="flex flex-shrink-0 items-center justify-between px-4 py-3"
         style={{ borderBottom: '1px solid var(--color-border)' }}
@@ -96,99 +115,38 @@ export default function RoutePage() {
         >
           <ArrowLeft size={24} />
         </button>
-        <h1 style={{ fontSize: 17, fontWeight: 600, color: 'var(--color-ink)' }}>
-          Plan a trip
-        </h1>
+        <h1 style={{ fontSize: 17, fontWeight: 600, color: 'var(--color-ink)' }}>Plan a trip</h1>
         <button style={{ color: 'var(--color-ink-3)' }} aria-label="Settings">
           <Settings size={24} />
         </button>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto" style={{ paddingBottom: 80 }}>
-        {/* Route selection */}
         <div className="p-4 space-y-3">
-          {/* Origin */}
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: 12,
-                fontWeight: 500,
-                color: 'var(--color-ink-2)',
-                marginBottom: 8,
-              }}
-            >
-              Origin
-            </label>
-            <div
-              style={{
-                padding: '12px 16px',
-                background: 'var(--color-surface-2)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 8,
-                fontSize: 14,
-                color: 'var(--color-ink)',
-              }}
-            >
-              Current location — {selectedRoute?.originName || 'Loading...'}
-            </div>
-          </div>
+          <PlaceSearchField
+            ref={originRef}
+            label="Origin"
+            placeholder="Search starting point"
+            value={origin}
+            onChange={(place) => {
+              setOrigin(place);
+              setPlannedRoute(null);
+            }}
+            onQueryChange={setOriginQuery}
+            allowCurrentLocation
+          />
+          <PlaceSearchField
+            ref={destRef}
+            label="Destination"
+            placeholder="Search destination"
+            value={destination}
+            onChange={(place) => {
+              setDestination(place);
+              setPlannedRoute(null);
+            }}
+            onQueryChange={setDestQuery}
+          />
 
-          {/* Destination */}
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: 12,
-                fontWeight: 500,
-                color: 'var(--color-ink-2)',
-                marginBottom: 8,
-              }}
-            >
-              Destination
-            </label>
-            <div className="relative">
-              <select
-                value={selectedRoute?.id || ''}
-                onChange={(e) => {
-                  const route = routes.find((r) => r.id === e.target.value);
-                  setSelectedRoute(route || null);
-                  setPlannedRoute(null);
-                  setShowAlternatives(false);
-                }}
-                style={{
-                  width: '100%',
-                  padding: '12px 40px 12px 16px',
-                  background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 8,
-                  fontSize: 14,
-                  color: 'var(--color-ink)',
-                  appearance: 'none',
-                  cursor: 'pointer',
-                }}
-              >
-                {routes.map((route) => (
-                  <option key={route.id} value={route.id}>
-                    {route.destinationName}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                size={20}
-                style={{
-                  position: 'absolute',
-                  right: 12,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: 'var(--color-ink-3)',
-                  pointerEvents: 'none',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Vehicle summary */}
           <div
             style={{
               padding: 12,
@@ -221,20 +179,20 @@ export default function RoutePage() {
             </div>
           </div>
 
-          {/* Plan trip button */}
           {plannedRoute === null && (
             <button
               onClick={handlePlanTrip}
+              disabled={!canPlan}
               style={{
                 width: '100%',
                 padding: '14px 24px',
-                background: 'var(--color-brand-500)',
-                color: 'white',
+                background: canPlan ? 'var(--color-brand-500)' : 'var(--color-surface-3)',
+                color: canPlan ? 'white' : 'var(--color-ink-3)',
                 border: 'none',
                 borderRadius: 8,
                 fontSize: 15,
                 fontWeight: 600,
-                cursor: 'pointer',
+                cursor: canPlan ? 'pointer' : 'not-allowed',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -242,246 +200,209 @@ export default function RoutePage() {
               }}
             >
               <NavigationIcon size={20} />
-              Plan trip
+              {planning ? 'Planning…' : 'Plan trip'}
             </button>
           )}
         </div>
 
-        {/* Map and route details */}
-        {showMap && (
+        {plannedRoute && (
           <>
-            {/* Map */}
             <div style={{ height: 300, position: 'relative' }}>
-              <RouteMap
-                route={plannedRoute ?? selectedRoute!}
-                chargingStop={plannedRoute ? chargingStop : undefined}
-              />
+              <RouteMap route={plannedRoute} chargingStop={chargingStop} />
             </div>
 
-            {/* Route summary */}
-            {plannedRoute !== null && (
-              <div className="p-4 space-y-3">
-                {/* Summary card */}
+            <div className="p-4 space-y-3">
+              <div
+                style={{
+                  padding: 16,
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 12,
+                }}
+              >
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                  <div>
+                    <p style={{ fontSize: 12, color: 'var(--color-ink-3)', marginBottom: 4 }}>
+                      Distance
+                    </p>
+                    <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>
+                      {plannedRoute.distanceKm} km
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 12, color: 'var(--color-ink-3)', marginBottom: 4 }}>
+                      Duration
+                    </p>
+                    <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>
+                      {Math.floor(plannedRoute.durationMins / 60)}h {plannedRoute.durationMins % 60}m
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 12, color: 'var(--color-ink-3)', marginBottom: 4 }}>
+                      Arrival SoC
+                    </p>
+                    <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>15%</p>
+                  </div>
+                </div>
+              </div>
+
+              {chargingStop && (
                 <div
                   style={{
                     padding: 16,
                     background: 'var(--color-surface)',
-                    border: '1px solid var(--color-border)',
+                    border: '2px solid var(--color-brand-500)',
                     borderRadius: 12,
                   }}
                 >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
-                    <div>
-                      <p
-                        style={{ fontSize: 12, color: 'var(--color-ink-3)', marginBottom: 4 }}
-                      >
-                        Distance
-                      </p>
-                      <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>
-                        {plannedRoute.distanceKm} km
-                      </p>
-                    </div>
-                    <div>
-                      <p
-                        style={{ fontSize: 12, color: 'var(--color-ink-3)', marginBottom: 4 }}
-                      >
-                        Duration
-                      </p>
-                      <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>
-                        {Math.floor(plannedRoute.durationMins / 60)}h{' '}
-                        {plannedRoute.durationMins % 60}m
-                      </p>
-                    </div>
-                    <div>
-                      <p
-                        style={{ fontSize: 12, color: 'var(--color-ink-3)', marginBottom: 4 }}
-                      >
-                        Arrival SoC
-                      </p>
-                      <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--color-ink)' }}>
-                        15%
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Charging stop card */}
-                {chargingStop && (
                   <div
                     style={{
-                      padding: 16,
-                      background: 'var(--color-surface)',
-                      border: `2px solid var(--color-brand-500)`,
-                      borderRadius: 12,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      marginBottom: 12,
                     }}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        marginBottom: 12,
-                      }}
-                    >
-                      <Zap size={16} style={{ color: 'var(--color-brand-500)' }} />
-                      <p
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 600,
-                          color: 'var(--color-brand-500)',
-                        }}
-                      >
-                        Charging stop · ETA 11:47 am
-                      </p>
-                    </div>
-                    <h3
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 600,
-                        color: 'var(--color-ink)',
-                        marginBottom: 8,
-                      }}
-                    >
+                    <Zap size={16} style={{ color: 'var(--color-brand-500)' }} />
+                    <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-brand-500)' }}>
+                      Charging stop
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/station/${chargingStop.id}`)}
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 8,
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-ink)' }}>
                       {chargingStop.name}
                     </h3>
+                    <ChevronRight size={18} style={{ color: 'var(--color-ink-3)', flexShrink: 0 }} />
+                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
                     <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        marginBottom: 12,
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        background: chargingStop.cpo?.chipColor || 'var(--color-ink-3)',
+                      }}
+                    />
+                    <span style={{ fontSize: 13, color: 'var(--color-ink-2)' }}>
+                      {chargingStop.cpo?.name || 'Unknown CPO'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  onClick={handleStartNavigation}
+                  style={{
+                    flex: 1,
+                    padding: '14px 24px',
+                    background: 'var(--color-brand-500)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 8,
+                    fontSize: 15,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Start navigation
+                </button>
+                <button
+                  onClick={() => setShowAlternatives(!showAlternatives)}
+                  style={{
+                    flex: 1,
+                    padding: '14px 24px',
+                    background: 'var(--color-surface)',
+                    color: 'var(--color-ink)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 8,
+                    fontSize: 15,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
+                  See {alternativeStops.length} alternatives
+                </button>
+              </div>
+
+              {showAlternatives && alternativeStops.length > 0 && (
+                <div className="space-y-3">
+                  {alternativeStops.map((stop) => (
+                    <button
+                      key={stop.id}
+                      type="button"
+                      onClick={() => router.push(`/station/${stop.id}`)}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: 16,
+                        background: 'var(--color-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 12,
+                        cursor: 'pointer',
+                        textAlign: 'left',
                       }}
                     >
                       <div
                         style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: '50%',
-                          background: chargingStop.cpo?.chipColor || 'var(--color-ink-3)',
-                        }}
-                      />
-                      <span style={{ fontSize: 13, color: 'var(--color-ink-2)' }}>
-                        {chargingStop.cpo?.name || 'Unknown CPO'}
-                      </span>
-                    </div>
-                    <div
-                      style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}
-                    >
-                      <div>
-                        <p
-                          style={{ fontSize: 11, color: 'var(--color-ink-3)', marginBottom: 2 }}
-                        >
-                          Arrive SoC
-                        </p>
-                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)' }}>
-                          25%
-                        </p>
-                      </div>
-                      <div>
-                        <p
-                          style={{ fontSize: 11, color: 'var(--color-ink-3)', marginBottom: 2 }}
-                        >
-                          Charge to
-                        </p>
-                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)' }}>
-                          80%
-                        </p>
-                      </div>
-                      <div>
-                        <p
-                          style={{ fontSize: 11, color: 'var(--color-ink-3)', marginBottom: 2 }}
-                        >
-                          Duration
-                        </p>
-                        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)' }}>
-                          45 min
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action buttons */}
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button
-                    onClick={handleStartNavigation}
-                    style={{
-                      flex: 1,
-                      padding: '14px 24px',
-                      background: 'var(--color-brand-500)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 8,
-                      fontSize: 15,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Start navigation
-                  </button>
-                  <button
-                    onClick={() => setShowAlternatives(!showAlternatives)}
-                    style={{
-                      flex: 1,
-                      padding: '14px 24px',
-                      background: 'var(--color-surface)',
-                      color: 'var(--color-ink)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 8,
-                      fontSize: 15,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    See {alternativeStops.length} alternatives
-                  </button>
-                </div>
-
-                {/* Alternative stops */}
-                {showAlternatives && alternativeStops.length > 0 && (
-                  <div className="space-y-3">
-                    {alternativeStops.map((stop) => (
-                      <div
-                        key={stop.id}
-                        style={{
-                          padding: 16,
-                          background: 'var(--color-surface)',
-                          border: '1px solid var(--color-border)',
-                          borderRadius: 12,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 8,
+                          marginBottom: 8,
                         }}
                       >
-                        <h3
-                          style={{
-                            fontSize: 15,
-                            fontWeight: 600,
-                            color: 'var(--color-ink)',
-                            marginBottom: 8,
-                          }}
-                        >
+                        <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-ink)' }}>
                           {stop.name}
                         </h3>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div
-                            style={{
-                              width: 6,
-                              height: 6,
-                              borderRadius: '50%',
-                              background: stop.cpo?.chipColor || 'var(--color-ink-3)',
-                            }}
-                          />
-                          <span style={{ fontSize: 13, color: 'var(--color-ink-2)' }}>
-                            {stop.cpo?.name || 'Unknown CPO'}
-                          </span>
-                        </div>
+                        <ChevronRight size={18} style={{ color: 'var(--color-ink-3)', flexShrink: 0 }} />
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div
+                          style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: '50%',
+                            background: stop.cpo?.chipColor || 'var(--color-ink-3)',
+                          }}
+                        />
+                        <span style={{ fontSize: 13, color: 'var(--color-ink-2)' }}>
+                          {stop.cpo?.name || 'Unknown CPO'}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>
     </div>
+  );
+
+  if (!API_KEY) {
+    return form;
+  }
+
+  return (
+    <APIProvider apiKey={API_KEY} libraries={['places', 'marker']}>
+      {form}
+    </APIProvider>
   );
 }
