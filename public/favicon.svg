@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img">
+  <title>Unified-EV</title>
+  <desc>Unified-EV app icon — charging connector on green background</desc>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#10b981"/>
+
+  <!-- Charging plug body -->
+  <rect x="216" y="80" width="80" height="176" rx="20" fill="white"/>
+  <!-- Lightning bolt -->
+  <polygon points="256,240 192,360 232,360 212,432 320,296 256,296 280,240" fill="white"/>
+  <!-- Left prong -->
+  <rect x="160" y="80" width="36" height="80" rx="10" fill="white" opacity="0.75"/>
+  <!-- Right prong -->
+  <rect x="316" y="80" width="36" height="80" rx="10" fill="white" opacity="0.75"/>
+</svg>
