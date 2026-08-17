@@ -310,6 +310,7 @@ export const PlaceSearchField = forwardRef<PlaceSearchHandle, Props>(function Pl
               <button
                 type="button"
                 role="option"
+                aria-selected={false}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => applyPlace(place)}
                 style={{
@@ -343,6 +344,7 @@ export const PlaceSearchField = forwardRef<PlaceSearchHandle, Props>(function Pl
                 <button
                   type="button"
                   role="option"
+                  aria-selected={false}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => applyPlace(place)}
                   style={{
@@ -372,6 +374,7 @@ export const PlaceSearchField = forwardRef<PlaceSearchHandle, Props>(function Pl
                 <button
                   type="button"
                   role="option"
+                  aria-selected={false}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => resolveGoogle(p)}
                   style={{
