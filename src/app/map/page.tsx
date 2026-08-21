@@ -13,7 +13,7 @@ import { useUserStore } from '@/stores/userStore';
 import { useToast } from '@/hooks/useToast';
 
 const MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
-const SEARCH_RADIUS_KM = 25;
+const SEARCH_RADIUS_KM = 50;
 
 export default function MapPage() {
   const router = useRouter();

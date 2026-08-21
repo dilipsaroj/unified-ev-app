@@ -13,25 +13,41 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const lat = parseFloat(searchParams.get('lat') || '19.076');
     const lng = parseFloat(searchParams.get('lng') || '72.877');
-    const radius = parseFloat(searchParams.get('radius') || '25');
+    const radiusParam = parseFloat(searchParams.get('radius') || '50');
+    const radius = Number.isFinite(radiusParam) ? radiusParam : 50;
 
-    // Subquery required — PostgreSQL does not allow HAVING without GROUP BY
-    const raw = await prisma.$queryRaw<Array<{ id: string; distance: number }>>`
-      SELECT id, distance FROM (
-        SELECT id,
-          (6371 * acos(
-            LEAST(1.0,
-              cos(radians(${lat})) * cos(radians(lat)) *
-              cos(radians(lng) - radians(${lng})) +
-              sin(radians(${lat})) * sin(radians(lat))
-            )
-          )) AS distance
-        FROM "Station"
-      ) AS sub
-      WHERE distance < ${radius}
-      ORDER BY distance
-      LIMIT 60
-    `;
+    // Nested so lat/lng are in scope. Subquery required — PostgreSQL
+    // does not allow HAVING without GROUP BY.
+    async function queryStations(searchRadius: number) {
+      return prisma.$queryRaw<Array<{ id: string; distance: number }>>`
+        SELECT id, distance FROM (
+          SELECT id,
+            (6371 * acos(
+              LEAST(1.0,
+                cos(radians(${lat})) * cos(radians(lat)) *
+                cos(radians(lng) - radians(${lng})) +
+                sin(radians(${lat})) * sin(radians(lat))
+              )
+            )) AS distance
+          FROM "Station"
+        ) AS sub
+        WHERE distance < ${searchRadius}
+        ORDER BY distance
+        LIMIT 60
+      `;
+    }
+
+    let raw = await queryStations(radius);
+
+    // OCM seed is Pune-heavy: Mumbai has only 2 stations inside 100 km
+    // (next is ~102 km in Hinjawadi). Step out until we have enough pins.
+    if (raw.length < 5) {
+      for (const step of [100, 150]) {
+        if (radius >= step) continue;
+        raw = await queryStations(step);
+        if (raw.length >= 5) break;
+      }
+    }
 
     if (raw.length === 0) {
       return NextResponse.json([]);
@@ -86,7 +102,10 @@ export async function GET(req: NextRequest) {
         reliabilityScore: avgScore,
         reliabilityTier,
         _lastConfirmedAt: lastConfirmedAt,
-        distanceKm: distanceMap[station.id] ?? null,
+        distanceKm:
+          distanceMap[station.id] != null
+            ? Math.round(distanceMap[station.id] * 10) / 10
+            : null,
         cpo: station.cpo
           ? {
               id: station.cpo.id,

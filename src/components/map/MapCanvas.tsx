@@ -1,6 +1,7 @@
 'use client';
 
-import { Map, AdvancedMarker, APIProvider } from '@vis.gl/react-google-maps';
+import { useEffect, useRef, type MutableRefObject } from 'react';
+import { Map, AdvancedMarker, APIProvider, useMap } from '@vis.gl/react-google-maps';
 import { useMapStore } from '@/stores/mapStore';
 import { StationPin } from '@/components/station/StationPin';
 import type { Station } from '@/lib/data/types';
@@ -24,8 +25,45 @@ function primaryConnectorLetter(station: Station): 'D' | 'A' {
 // Do NOT pass `styles` together with `mapId` — they are mutually exclusive and break the map.
 const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
 
+/** Must be a child of <Map> — useMap() is null outside the map instance. */
+function ZoomForCoverage({
+  stations,
+  skipCenterFromCamera,
+}: {
+  stations: Station[];
+  skipCenterFromCamera: MutableRefObject<boolean>;
+}) {
+  const map = useMap();
+  const fittedKey = useRef('');
+
+  useEffect(() => {
+    if (!map || stations.length === 0) return;
+
+    const maxDist = Math.max(...stations.map((s) => s.distanceKm ?? 0));
+    if (maxDist <= 40) return;
+
+    const key = stations
+      .map((s) => s.id)
+      .sort()
+      .join(',');
+    if (fittedKey.current === key) return;
+    fittedKey.current = key;
+
+    // ~100 km Pune cluster needs zoom 8; 40–80 km is zoom 9.
+    skipCenterFromCamera.current = true;
+    map.setZoom(maxDist > 80 ? 8 : 9);
+    const t = window.setTimeout(() => {
+      skipCenterFromCamera.current = false;
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [map, stations, skipCenterFromCamera]);
+
+  return null;
+}
+
 export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
   const { center, zoom, selectedStationId, selectStation, setCenter, setZoom } = useMapStore();
+  const skipCenterFromCamera = useRef(false);
 
   function handlePinClick(stationId: string) {
     selectStation(stationId);
@@ -52,8 +90,9 @@ export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
         defaultCenter={center}
         defaultZoom={zoom}
         onCameraChanged={(ev) => {
-          setCenter(ev.detail.center);
           setZoom(ev.detail.zoom);
+          if (skipCenterFromCamera.current) return;
+          setCenter(ev.detail.center);
         }}
         gestureHandling="greedy"
         disableDefaultUI
@@ -61,6 +100,7 @@ export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
         className="w-full h-full"
         mapId={MAP_ID}
       >
+        <ZoomForCoverage stations={stations} skipCenterFromCamera={skipCenterFromCamera} />
         {stations.map((station) => (
           <AdvancedMarker
             key={station.id}
