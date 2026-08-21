@@ -19,7 +19,7 @@ export default function MapPage() {
   const router = useRouter();
   const { currentUser } = useUserStore();
   const { success } = useToast();
-  const { center, filters, selectedStationId, selectStation } = useMapStore();
+  const { center, filters, selectedStationId, selectStation, setCenter } = useMapStore();
   const { stations, loading } = useStations(center.lat, center.lng, SEARCH_RADIUS_KM, {
     availableOnly: filters.availableOnly,
     connectorTypes: filters.connectorTypes.length > 0 ? filters.connectorTypes : undefined,
@@ -60,6 +60,25 @@ export default function MapPage() {
     }, 5000);
     return () => clearTimeout(timer);
   }, [showHint]);
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCenter({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      },
+      () => {
+        // Permission denied or GPS unavailable — keep Mumbai default silently
+      },
+      { timeout: 8000, maximumAge: 60_000 },
+    );
+    // Run once on mount only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function dismissHint() {
     setShowHint(false);

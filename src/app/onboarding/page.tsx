@@ -1,17 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { dataClient } from '@/lib/data';
 
+/** Keep the 10-digit national number. Strips +91 / 91 / leading 0 from paste/autofill. */
+function toNationalNumber(raw: string): string {
+  let digits = raw.replace(/\D/g, '');
+  if (digits.startsWith('91') && digits.length >= 12) {
+    digits = digits.slice(-10);
+  } else if (digits.startsWith('0') && digits.length === 11) {
+    digits = digits.slice(1);
+  }
+  return digits.slice(0, 10);
+}
+
 export default function OnboardingPhonePage() {
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const isValid = phone.length === 10 && /^\d{10}$/.test(phone);
+  const isValid = phone.length === 10 && /^[6-9]\d{9}$/.test(phone);
+
+  const applyPhone = (raw: string) => {
+    const next = toNationalNumber(raw);
+    setPhone((prev) => (prev === next ? prev : next));
+  };
+
+  // Chrome/Safari autofill often paints a value without firing React onChange.
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+
+    const syncFromDom = () => applyPhone(el.value);
+    el.addEventListener('input', syncFromDom);
+    el.addEventListener('change', syncFromDom);
+    const interval = window.setInterval(syncFromDom, 200);
+    const stop = window.setTimeout(() => window.clearInterval(interval), 4000);
+
+    return () => {
+      el.removeEventListener('input', syncFromDom);
+      el.removeEventListener('change', syncFromDom);
+      window.clearInterval(interval);
+      window.clearTimeout(stop);
+    };
+  }, []);
 
   const handleContinue = async () => {
     if (!isValid) return;
@@ -110,15 +146,16 @@ export default function OnboardingPhonePage() {
                 +91
               </span>
               <input
+                ref={inputRef}
                 id="phone"
+                name="phone"
                 type="tel"
                 inputMode="numeric"
-                maxLength={10}
+                autoComplete="tel-national"
+                maxLength={16}
                 value={phone}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '');
-                  setPhone(value);
-                }}
+                onChange={(e) => applyPhone(e.target.value)}
+                onBlur={(e) => applyPhone(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="9876543210"
                 autoFocus
