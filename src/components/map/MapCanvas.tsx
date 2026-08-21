@@ -11,6 +11,7 @@ interface Props {
   stations: Station[];
   apiKey: string;
   onSelectStation: (id: string) => void;
+  userLocation?: { lat: number; lng: number } | null;
 }
 
 function primaryConnectorLetter(station: Station): 'D' | 'A' {
@@ -24,6 +25,31 @@ function primaryConnectorLetter(station: Station): 'D' | 'A' {
 // Override with a Cloud Console Map ID when you need custom cloud styling.
 // Do NOT pass `styles` together with `mapId` — they are mutually exclusive and break the map.
 const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
+
+/** Must be a child of <Map> — useMap() is null outside the map instance. */
+function PanToUserLocation({
+  userLocation,
+  skipCenterFromCamera,
+}: {
+  userLocation: { lat: number; lng: number } | null | undefined;
+  skipCenterFromCamera: MutableRefObject<boolean>;
+}) {
+  const map = useMap();
+  const didPan = useRef(false);
+
+  useEffect(() => {
+    if (!map || !userLocation || didPan.current) return;
+    didPan.current = true;
+    skipCenterFromCamera.current = true;
+    map.panTo(userLocation);
+    const t = window.setTimeout(() => {
+      skipCenterFromCamera.current = false;
+    }, 400);
+    return () => clearTimeout(t);
+  }, [map, userLocation, skipCenterFromCamera]);
+
+  return null;
+}
 
 /** Must be a child of <Map> — useMap() is null outside the map instance. */
 function ZoomForCoverage({
@@ -61,7 +87,7 @@ function ZoomForCoverage({
   return null;
 }
 
-export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
+export function MapCanvas({ stations, apiKey, onSelectStation, userLocation }: Props) {
   const { center, zoom, selectedStationId, selectStation, setCenter, setZoom } = useMapStore();
   const skipCenterFromCamera = useRef(false);
 
@@ -100,6 +126,7 @@ export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
         className="w-full h-full"
         mapId={MAP_ID}
       >
+        <PanToUserLocation userLocation={userLocation} skipCenterFromCamera={skipCenterFromCamera} />
         <ZoomForCoverage stations={stations} skipCenterFromCamera={skipCenterFromCamera} />
         {stations.map((station) => (
           <AdvancedMarker
@@ -115,6 +142,21 @@ export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
             />
           </AdvancedMarker>
         ))}
+        {userLocation && (
+          <AdvancedMarker position={userLocation} zIndex={999} clickable={false}>
+            <div
+              data-testid="user-location-dot"
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                background: '#4285F4',
+                border: '3px solid #fff',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
+              }}
+            />
+          </AdvancedMarker>
+        )}
       </Map>
     </APIProvider>
   );

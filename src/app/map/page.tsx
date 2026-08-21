@@ -29,6 +29,7 @@ export default function MapPage() {
 
   // Avoid SSR/client hydration mismatch — decide after mount
   const [showHint, setShowHint] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (!sessionStorage.getItem('uev_map_hint_dismissed')) {
@@ -66,10 +67,9 @@ export default function MapPage() {
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setCenter({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
+        const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setCenter(loc);
+        setUserLocation(loc);
       },
       () => {
         // Permission denied or GPS unavailable — keep Mumbai default silently
@@ -100,6 +100,7 @@ export default function MapPage() {
           stations={stations}
           apiKey={MAPS_API_KEY}
           onSelectStation={handleSelectStation}
+          userLocation={userLocation}
         />
       </div>
 
