@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +25,7 @@ export async function POST(req: NextRequest) {
     // Production: trigger SMS OTP via Supabase Phone Auth
     // Requires: Supabase dashboard → Authentication → Providers → Phone → Enable
     // and connect Twilio or MSG91 as the SMS provider
-    const { error } = await supabaseAdmin.auth.signInWithOtp({ phone })
+    const { error } = await getSupabaseAdmin().auth.signInWithOtp({ phone })
 
     if (error) {
       console.error('Supabase OTP error:', error.message)
