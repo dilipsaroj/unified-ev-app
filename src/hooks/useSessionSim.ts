@@ -23,8 +23,11 @@ export function useSessionSim({
   const startTimeRef = useRef<number>(Date.now());
   const rafIdRef = useRef<number>();
 
+  const sessionId = activeSession?.id;
+  const status = activeSession?.status;
+
   useEffect(() => {
-    if (!activeSession || activeSession.status !== 'ACTIVE') {
+    if (!sessionId || status !== 'ACTIVE') {
       return;
     }
 
@@ -67,7 +70,8 @@ export function useSessionSim({
       }
     };
   }, [
-    activeSession,
+    sessionId,
+    status,
     vehicle.batteryKwh,
     connector.maxPowerKw,
     connector.pricePerKwh,

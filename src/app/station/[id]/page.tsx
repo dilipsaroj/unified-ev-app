@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Script from 'next/script';
 import {
   ArrowLeft,
   Share2,
@@ -111,6 +112,7 @@ export default function StationDetailPage({ params }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [checkingIn, setCheckingIn] = useState<string | null>(null); // connectorId being submitted
   const [checkedIn, setCheckedIn] = useState<Set<string>>(new Set()); // connectorIds already checked in
+  const [paying, setPaying] = useState(false);
 
   useEffect(() => {
     const loadStation = async () => {
@@ -153,6 +155,76 @@ export default function StationDetailPage({ params }: Props) {
       } catch (err) {
         console.error('Share failed:', err);
       }
+    }
+  };
+
+  const handleStartCharging = async (connectorId: string) => {
+    if (!station || paying) return;
+    setPaying(true);
+
+    try {
+      const res = await fetch('/api/payment/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stationId: station.id, connectorId }),
+      });
+
+      if (res.status === 401) {
+        alert('Please log in to start charging.');
+        setPaying(false);
+        return;
+      }
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(payload.detail || payload.error || 'Could not create order');
+      }
+
+      const { orderId, amount, currency, keyId } = payload;
+
+      await waitForRazorpay();
+
+      const options = {
+        key: keyId,
+        amount,
+        currency,
+        name: 'Unified EV',
+        description: 'Charging session deposit (₹50 — not metered billing)',
+        order_id: orderId,
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          const verifyRes = await fetch('/api/payment/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(response),
+          });
+
+          if (!verifyRes.ok) {
+            alert('Payment verification failed. Please contact support.');
+            setPaying(false);
+            return;
+          }
+
+          const { sessionId } = await verifyRes.json();
+          window.location.href = `/session/${sessionId}`;
+        },
+        modal: {
+          ondismiss: () => {
+            setPaying(false);
+          },
+        },
+        theme: { color: '#10B981' },
+      };
+
+      const rzp = new window.Razorpay(options as Record<string, unknown>);
+      rzp.open();
+    } catch (err) {
+      console.error('Payment error:', err);
+      const message = err instanceof Error ? err.message : 'Could not start payment. Please try again.';
+      alert(message);
+      setPaying(false);
     }
   };
 
@@ -250,6 +322,7 @@ export default function StationDetailPage({ params }: Props) {
       className="flex h-full min-h-0 flex-col"
       style={{ background: 'var(--color-bg)', color: 'var(--color-ink)' }}
     >
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <div
         className="flex-shrink-0"
         style={{
@@ -474,6 +547,26 @@ export default function StationDetailPage({ params }: Props) {
                         </>
                       )}
                     </div>
+
+                    <button
+                      onClick={() => handleStartCharging(connector.id)}
+                      disabled={paying}
+                      style={{
+                        width: '100%',
+                        marginTop: 12,
+                        padding: '12px 0',
+                        background: paying ? 'rgba(16,185,129,0.4)' : 'var(--color-tier-green)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: 15,
+                        fontWeight: 700,
+                        cursor: paying ? 'not-allowed' : 'pointer',
+                        letterSpacing: 0.3,
+                      }}
+                    >
+                      {paying ? 'Opening payment…' : '⚡ Start Charging — ₹50'}
+                    </button>
                   </div>
                 );
               })}
@@ -639,4 +732,28 @@ export default function StationDetailPage({ params }: Props) {
       `}</style>
     </div>
   );
+}
+
+declare global {
+  interface Window {
+    Razorpay: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
+
+function waitForRazorpay(timeoutMs = 8000): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const tick = () => {
+      if (typeof window.Razorpay === 'function') {
+        resolve();
+        return;
+      }
+      if (Date.now() - started > timeoutMs) {
+        reject(new Error('Razorpay checkout not loaded. Check your network and try again.'));
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
 }

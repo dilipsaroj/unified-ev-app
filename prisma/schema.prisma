@@ -18,6 +18,7 @@ model User {
   sessions  Session[]
   reviews   Review[]
   checkIns  CheckIn[]
+  payments  Payment[]
 }
 
 model Vehicle {
@@ -93,7 +94,8 @@ model Session {
   endedAt     DateTime?
   energyKwh   Float?
   totalCost   Float?
-  paymentId   String?
+  paymentId   String?       @unique
+  payment     Payment?      @relation(fields: [paymentId], references: [id])
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -120,6 +122,22 @@ model CheckIn {
   connector   Connector @relation(fields: [connectorId], references: [id])
   working     Boolean
   createdAt   DateTime  @default(now())
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  razorpayOrderId   String        @unique
+  razorpayPaymentId String?
+  amount            Int // in paise (₹50 = 5000)
+  currency          String        @default("INR")
+  status            PaymentStatus @default(CREATED)
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  stationId         String
+  connectorId       String
+  session           Session?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 }
 
 model Photo {
@@ -151,6 +169,14 @@ enum ConnectorStatus {
   OCCUPIED
   FAULTED
   OFFLINE
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
 }
 
 enum SessionStatus {
