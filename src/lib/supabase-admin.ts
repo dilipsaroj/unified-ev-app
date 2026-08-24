@@ -1,8 +1,22 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-// This file is SERVER-SIDE ONLY
-// Never import this in pages/ or components/ — only in app/api/ routes
-export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+// SERVER-SIDE ONLY — do not import in client components.
+
+let client: SupabaseClient | null = null
+
+export function getSupabaseAdmin(): SupabaseClient {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!url || !key) {
+    throw new Error(
+      'NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set',
+    )
+  }
+
+  if (!client) {
+    client = createClient(url, key)
+  }
+
+  return client
+}
