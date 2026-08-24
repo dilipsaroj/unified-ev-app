@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Script from 'next/script';
 import {
   ArrowLeft,
   Share2,
@@ -109,6 +110,9 @@ export default function StationDetailPage({ params }: Props) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [checkingIn, setCheckingIn] = useState<string | null>(null); // connectorId being submitted
+  const [checkedIn, setCheckedIn] = useState<Set<string>>(new Set()); // connectorIds already checked in
+  const [paying, setPaying] = useState(false);
 
   useEffect(() => {
     const loadStation = async () => {
@@ -154,8 +158,116 @@ export default function StationDetailPage({ params }: Props) {
     }
   };
 
-  const handleReport = () => {
-    alert('Reported. Thanks for helping other drivers.');
+  const handleStartCharging = async (connectorId: string) => {
+    if (!station || paying) return;
+    setPaying(true);
+
+    try {
+      const res = await fetch('/api/payment/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stationId: station.id, connectorId }),
+      });
+
+      if (res.status === 401) {
+        alert('Please log in to start charging.');
+        setPaying(false);
+        return;
+      }
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(payload.detail || payload.error || 'Could not create order');
+      }
+
+      const { orderId, amount, currency, keyId } = payload;
+
+      await waitForRazorpay();
+
+      const options = {
+        key: keyId,
+        amount,
+        currency,
+        name: 'Unified EV',
+        description: 'Charging session deposit (₹50 — not metered billing)',
+        order_id: orderId,
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          const verifyRes = await fetch('/api/payment/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(response),
+          });
+
+          if (!verifyRes.ok) {
+            alert('Payment verification failed. Please contact support.');
+            setPaying(false);
+            return;
+          }
+
+          const { sessionId } = await verifyRes.json();
+          window.location.href = `/session/${sessionId}`;
+        },
+        modal: {
+          ondismiss: () => {
+            setPaying(false);
+          },
+        },
+        theme: { color: '#10B981' },
+      };
+
+      const rzp = new window.Razorpay(options as Record<string, unknown>);
+      rzp.open();
+    } catch (err) {
+      console.error('Payment error:', err);
+      const message = err instanceof Error ? err.message : 'Could not start payment. Please try again.';
+      alert(message);
+      setPaying(false);
+    }
+  };
+
+  const handleCheckIn = async (connectorId: string, working: boolean) => {
+    if (!station) return;
+    if (checkingIn) return; // prevent double-tap
+
+    setCheckingIn(connectorId);
+    try {
+      const res = await fetch('/api/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stationId: station.id,
+          connectorId,
+          working,
+        }),
+      });
+
+      if (res.status === 401) {
+        // Not logged in — shouldn't happen (middleware protects this route)
+        // but handle gracefully
+        alert('Please log in to submit a check-in.');
+        return;
+      }
+
+      if (!res.ok) throw new Error('Check-in failed');
+
+      // Mark this connector as checked in for this session
+      setCheckedIn((prev) => new Set([...prev, connectorId]));
+
+      // Re-fetch station to update reliability score + badge
+      const updated = await fetch(`/api/stations/${station.id}`);
+      if (updated.ok) {
+        const data = await updated.json();
+        setStation(data);
+      }
+    } catch (err) {
+      console.error('Check-in error:', err);
+      alert('Could not submit check-in. Please try again.');
+    } finally {
+      setCheckingIn(null);
+    }
   };
 
   const openDirections = () => {
@@ -210,6 +322,7 @@ export default function StationDetailPage({ params }: Props) {
       className="flex h-full min-h-0 flex-col"
       style={{ background: 'var(--color-bg)', color: 'var(--color-ink)' }}
     >
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
       <div
         className="flex-shrink-0"
         style={{
@@ -342,30 +455,118 @@ export default function StationDetailPage({ params }: Props) {
                       border: '1px solid var(--color-border)',
                       borderRadius: 'var(--radius-md)',
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
+                      flexDirection: 'column',
+                      gap: 12,
                     }}
                   >
-                    <div className="flex flex-col gap-1">
-                      <div style={{ fontSize: 14, fontWeight: 600 }}>
-                        {connector.type.replace(/_/g, ' ')} • {connector.maxPowerKw} kW
-                      </div>
-                      <div style={{ fontSize: 13, color: 'var(--color-ink-2)' }}>
-                        ₹{connector.pricePerKwh}/kWh
-                      </div>
-                    </div>
                     <div
                       style={{
-                        padding: '4px 10px',
-                        background: `${statusColor}22`,
-                        color: statusColor,
-                        borderRadius: 'var(--radius-sm)',
-                        fontSize: 12,
-                        fontWeight: 500,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
-                      {connector.status.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
+                      <div className="flex flex-col gap-1">
+                        <div style={{ fontSize: 14, fontWeight: 600 }}>
+                          {connector.type.replace(/_/g, ' ')} • {connector.maxPowerKw} kW
+                        </div>
+                        <div style={{ fontSize: 13, color: 'var(--color-ink-2)' }}>
+                          ₹{connector.pricePerKwh}/kWh
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          padding: '4px 10px',
+                          background: `${statusColor}22`,
+                          color: statusColor,
+                          borderRadius: 'var(--radius-sm)',
+                          fontSize: 12,
+                          fontWeight: 500,
+                        }}
+                      >
+                        {connector.status.toLowerCase().replace(/^\w/, (c) => c.toUpperCase())}
+                      </div>
                     </div>
+
+                    {/* Check-in buttons — shown below connector status */}
+                    <div
+                      style={{
+                        marginTop: 12,
+                        display: 'flex',
+                        gap: 8,
+                      }}
+                    >
+                      {checkedIn.has(connector.id) ? (
+                        <div
+                          style={{
+                            fontSize: 13,
+                            color: 'var(--color-ink-3)',
+                            fontStyle: 'italic',
+                          }}
+                        >
+                          Thanks for the update ✓
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handleCheckIn(connector.id, true)}
+                            disabled={checkingIn === connector.id}
+                            style={{
+                              flex: 1,
+                              padding: '8px 0',
+                              background: 'rgba(16, 185, 129, 0.12)',
+                              color: 'var(--color-tier-green)',
+                              border: '1px solid rgba(16, 185, 129, 0.3)',
+                              borderRadius: 'var(--radius-sm)',
+                              fontSize: 13,
+                              fontWeight: 600,
+                              cursor: checkingIn === connector.id ? 'not-allowed' : 'pointer',
+                              opacity: checkingIn === connector.id ? 0.6 : 1,
+                            }}
+                          >
+                            {checkingIn === connector.id ? '...' : '✓ Working'}
+                          </button>
+                          <button
+                            onClick={() => handleCheckIn(connector.id, false)}
+                            disabled={checkingIn === connector.id}
+                            style={{
+                              flex: 1,
+                              padding: '8px 0',
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              color: 'var(--color-danger)',
+                              border: '1px solid rgba(239, 68, 68, 0.25)',
+                              borderRadius: 'var(--radius-sm)',
+                              fontSize: 13,
+                              fontWeight: 600,
+                              cursor: checkingIn === connector.id ? 'not-allowed' : 'pointer',
+                              opacity: checkingIn === connector.id ? 0.6 : 1,
+                            }}
+                          >
+                            {checkingIn === connector.id ? '...' : '✗ Broken'}
+                          </button>
+                        </>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => handleStartCharging(connector.id)}
+                      disabled={paying}
+                      style={{
+                        width: '100%',
+                        marginTop: 12,
+                        padding: '12px 0',
+                        background: paying ? 'rgba(16,185,129,0.4)' : 'var(--color-tier-green)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 'var(--radius-md)',
+                        fontSize: 15,
+                        fontWeight: 700,
+                        cursor: paying ? 'not-allowed' : 'pointer',
+                        letterSpacing: 0.3,
+                      }}
+                    >
+                      {paying ? 'Opening payment…' : '⚡ Start Charging — ₹50'}
+                    </button>
                   </div>
                 );
               })}
@@ -470,22 +671,6 @@ export default function StationDetailPage({ params }: Props) {
             </div>
           )}
 
-          <button
-            onClick={handleReport}
-            style={{
-              padding: '12px',
-              background: 'transparent',
-              color: 'var(--color-ink-3)',
-              border: 'none',
-              borderRadius: 'var(--radius-md)',
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: 'pointer',
-              textAlign: 'center',
-            }}
-          >
-            Report an issue
-          </button>
         </div>
       </div>
 
@@ -547,4 +732,28 @@ export default function StationDetailPage({ params }: Props) {
       `}</style>
     </div>
   );
+}
+
+declare global {
+  interface Window {
+    Razorpay: new (options: Record<string, unknown>) => { open: () => void };
+  }
+}
+
+function waitForRazorpay(timeoutMs = 8000): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const tick = () => {
+      if (typeof window.Razorpay === 'function') {
+        resolve();
+        return;
+      }
+      if (Date.now() - started > timeoutMs) {
+        reject(new Error('Razorpay checkout not loaded. Check your network and try again.'));
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
 }

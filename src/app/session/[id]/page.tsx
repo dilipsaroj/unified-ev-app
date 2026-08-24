@@ -19,7 +19,7 @@ const SIMULATION_DURATION_SEC = 90;
 
 export default function SessionPage({ params }: Props) {
   const router = useRouter();
-  const { activeSession, updateActiveSession, stopSession } = useSessionStore();
+  const { activeSession, setActiveSession, updateActiveSession, stopSession } = useSessionStore();
   const { currentVehicle } = useUserStore();
   
   const [station, setStation] = useState<Station | null>(null);
@@ -42,17 +42,28 @@ export default function SessionPage({ params }: Props) {
   const targetSoc = vehicle.preferredChargeToPct || 80;
 
   useEffect(() => {
-    const loadData = async () => {
-      if (!activeSession) {
-        router.push('/map');
-        return;
-      }
+    let cancelled = false;
 
+    const loadData = async () => {
+      setIsLoading(true);
       try {
-        const [stationData, connectorStatus] = await Promise.all([
-          dataClient.getStation(activeSession.stationId),
-          dataClient.getConnectorStatus(activeSession.connectorId),
-        ]);
+        const sessionRes = await fetch(`/api/sessions/${params.id}`);
+
+        if (sessionRes.status === 401) {
+          router.push('/onboarding');
+          return;
+        }
+        if (!sessionRes.ok) {
+          router.push('/map');
+          return;
+        }
+
+        const session = await sessionRes.json();
+        if (cancelled) return;
+
+        setActiveSession(session);
+
+        const stationData = await dataClient.getStation(session.stationId);
 
         if (!stationData) {
           router.push('/map');
@@ -60,7 +71,7 @@ export default function SessionPage({ params }: Props) {
         }
 
         const connectorData = stationData.connectors?.find(
-          (c) => c.id === activeSession.connectorId
+          (c) => c.id === session.connectorId,
         );
 
         if (!connectorData) {
@@ -68,21 +79,27 @@ export default function SessionPage({ params }: Props) {
           return;
         }
 
+        if (cancelled) return;
+
         setStation(stationData);
         setConnector(connectorData);
 
-        if (activeSession.status === 'PAYMENT_AUTHORIZED' || activeSession.status === 'STARTING') {
+        if (session.status === 'PAYMENT_AUTHORIZED' || session.status === 'STARTING') {
           updateActiveSession({ status: 'ACTIVE' });
         }
       } catch (err) {
         console.error('Failed to load session data:', err);
+        router.push('/map');
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
     loadData();
-  }, [activeSession, router, updateActiveSession]);
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id, router, setActiveSession, updateActiveSession]);
 
   useSessionSim({
     vehicle,

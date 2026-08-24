@@ -18,21 +18,25 @@ const BatteryHealthChart = dynamic(
 export default function PassportPage() {
   const router = useRouter();
   const { currentUser, currentVehicle } = useUserStore();
+  const [hydrated, setHydrated] = useState(false);
   const [history, setHistory] = useState<ChargingHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedCpo, setSelectedCpo] = useState<string>('all');
 
+  // Zustand persist rehydrates after the first client render. Redirecting before
+  // that sent /onboarding → middleware → /map, so the Passport tab looked dead.
   useEffect(() => {
-    // Redirect to onboarding if no user/vehicle
-    if (!currentUser || !currentVehicle) {
-      router.push('/onboarding');
-      return;
-    }
+    setHydrated(useUserStore.persist.hasHydrated());
+    return useUserStore.persist.onFinishHydration(() => setHydrated(true));
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
 
     async function loadHistory() {
       try {
-        const data = await dataClient.getChargingHistory(currentUser!.id);
+        const data = await dataClient.getChargingHistory(currentUser?.id ?? 'demo-user');
         setHistory(data);
       } catch (err) {
         console.error('Failed to load history:', err);
@@ -42,7 +46,7 @@ export default function PassportPage() {
     }
 
     loadHistory();
-  }, [currentUser, currentVehicle, router]);
+  }, [hydrated, currentUser]);
 
   // Calculate stats
   const stats = useMemo(() => {

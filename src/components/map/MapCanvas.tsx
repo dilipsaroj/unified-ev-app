@@ -1,6 +1,7 @@
 'use client';
 
-import { Map, AdvancedMarker, APIProvider } from '@vis.gl/react-google-maps';
+import { useEffect, useRef, type MutableRefObject } from 'react';
+import { Map, AdvancedMarker, APIProvider, useMap } from '@vis.gl/react-google-maps';
 import { useMapStore } from '@/stores/mapStore';
 import { StationPin } from '@/components/station/StationPin';
 import type { Station } from '@/lib/data/types';
@@ -10,6 +11,7 @@ interface Props {
   stations: Station[];
   apiKey: string;
   onSelectStation: (id: string) => void;
+  userLocation?: { lat: number; lng: number } | null;
 }
 
 function primaryConnectorLetter(station: Station): 'D' | 'A' {
@@ -24,8 +26,70 @@ function primaryConnectorLetter(station: Station): 'D' | 'A' {
 // Do NOT pass `styles` together with `mapId` — they are mutually exclusive and break the map.
 const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID || 'DEMO_MAP_ID';
 
-export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
+/** Must be a child of <Map> — useMap() is null outside the map instance. */
+function PanToUserLocation({
+  userLocation,
+  skipCenterFromCamera,
+}: {
+  userLocation: { lat: number; lng: number } | null | undefined;
+  skipCenterFromCamera: MutableRefObject<boolean>;
+}) {
+  const map = useMap();
+  const didPan = useRef(false);
+
+  useEffect(() => {
+    if (!map || !userLocation || didPan.current) return;
+    didPan.current = true;
+    skipCenterFromCamera.current = true;
+    map.panTo(userLocation);
+    const t = window.setTimeout(() => {
+      skipCenterFromCamera.current = false;
+    }, 400);
+    return () => clearTimeout(t);
+  }, [map, userLocation, skipCenterFromCamera]);
+
+  return null;
+}
+
+/** Must be a child of <Map> — useMap() is null outside the map instance. */
+function ZoomForCoverage({
+  stations,
+  skipCenterFromCamera,
+}: {
+  stations: Station[];
+  skipCenterFromCamera: MutableRefObject<boolean>;
+}) {
+  const map = useMap();
+  const fittedKey = useRef('');
+
+  useEffect(() => {
+    if (!map || stations.length === 0) return;
+
+    const maxDist = Math.max(...stations.map((s) => s.distanceKm ?? 0));
+    if (maxDist <= 40) return;
+
+    const key = stations
+      .map((s) => s.id)
+      .sort()
+      .join(',');
+    if (fittedKey.current === key) return;
+    fittedKey.current = key;
+
+    // ~100 km Pune cluster needs zoom 8; 40–80 km is zoom 9.
+    skipCenterFromCamera.current = true;
+    map.setZoom(maxDist > 80 ? 8 : 9);
+    const t = window.setTimeout(() => {
+      skipCenterFromCamera.current = false;
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [map, stations, skipCenterFromCamera]);
+
+  return null;
+}
+
+export function MapCanvas({ stations, apiKey, onSelectStation, userLocation }: Props) {
   const { center, zoom, selectedStationId, selectStation, setCenter, setZoom } = useMapStore();
+  const skipCenterFromCamera = useRef(false);
 
   function handlePinClick(stationId: string) {
     selectStation(stationId);
@@ -52,8 +116,9 @@ export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
         defaultCenter={center}
         defaultZoom={zoom}
         onCameraChanged={(ev) => {
-          setCenter(ev.detail.center);
           setZoom(ev.detail.zoom);
+          if (skipCenterFromCamera.current) return;
+          setCenter(ev.detail.center);
         }}
         gestureHandling="greedy"
         disableDefaultUI
@@ -61,6 +126,8 @@ export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
         className="w-full h-full"
         mapId={MAP_ID}
       >
+        <PanToUserLocation userLocation={userLocation} skipCenterFromCamera={skipCenterFromCamera} />
+        <ZoomForCoverage stations={stations} skipCenterFromCamera={skipCenterFromCamera} />
         {stations.map((station) => (
           <AdvancedMarker
             key={station.id}
@@ -75,6 +142,21 @@ export function MapCanvas({ stations, apiKey, onSelectStation }: Props) {
             />
           </AdvancedMarker>
         ))}
+        {userLocation && (
+          <AdvancedMarker position={userLocation} zIndex={999} clickable={false}>
+            <div
+              data-testid="user-location-dot"
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                background: '#4285F4',
+                border: '3px solid #fff',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
+              }}
+            />
+          </AdvancedMarker>
+        )}
       </Map>
     </APIProvider>
   );

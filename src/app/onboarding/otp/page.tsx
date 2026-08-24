@@ -152,6 +152,17 @@ function OtpContent() {
                 +91 {maskedPhone}
               </span>
             </p>
+            {process.env.NODE_ENV === 'development' && (
+              <p
+                style={{
+                  fontSize: 13,
+                  color: 'var(--color-ink-3)',
+                  lineHeight: 1.5,
+                }}
+              >
+                Local dev does not send SMS. Enter <strong>1234</strong>.
+              </p>
+            )}
 
             <div
               style={{

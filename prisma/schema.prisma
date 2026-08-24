@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  phone     String    @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  vehicles  Vehicle[]
+  sessions  Session[]
+  reviews   Review[]
+  checkIns  CheckIn[]
+  payments  Payment[]
+}
+
+model Vehicle {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  nickname      String
+  vehicleClass  VehicleClass
+  brand         String
+  model         String
+  batteryKwh    Float
+  connectorType ConnectorType
+  createdAt     DateTime       @default(now())
+}
+
+model CPO {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  logoUrl     String?
+  chipColor   String?
+  ocpiEnabled Boolean   @default(false)
+  stations    Station[]
+  createdAt   DateTime  @default(now())
+}
+
+model Station {
+  id           String      @id @default(cuid())
+  cpoId        String
+  cpo          CPO         @relation(fields: [cpoId], references: [id])
+  name         String
+  address      String
+  lat          Float
+  lng          Float
+  amenities    String[]
+  avgWaitMins  Int         @default(0)
+  trafficLevel String      @default("LOW")
+  bestTime     String?
+  connectors   Connector[]
+  reviews      Review[]
+  checkIns     CheckIn[]
+  photos       Photo[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Connector {
+  id               String          @id @default(cuid())
+  stationId        String
+  station          Station         @relation(fields: [stationId], references: [id])
+  type             ConnectorType
+  maxPowerKw       Float
+  pricePerKwh      Float
+  status           ConnectorStatus @default(AVAILABLE)
+  reliabilityScore Int             @default(100)
+  reliabilityTier  String          @default("green")
+  sampleSize       Int             @default(0)
+  lastConfirmedAt  DateTime?
+  sessions         Session[]
+  checkIns         CheckIn[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model Session {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  connectorId String
+  connector   Connector     @relation(fields: [connectorId], references: [id])
+  status      SessionStatus @default(INITIATED)
+  startedAt   DateTime?
+  endedAt     DateTime?
+  energyKwh   Float?
+  totalCost   Float?
+  paymentId   String?       @unique
+  payment     Payment?      @relation(fields: [paymentId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  stationId String
+  station   Station  @relation(fields: [stationId], references: [id])
+  rating    Int
+  text      String?
+  isCurated Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model CheckIn {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  stationId   String
+  station     Station   @relation(fields: [stationId], references: [id])
+  connectorId String
+  connector   Connector @relation(fields: [connectorId], references: [id])
+  working     Boolean
+  createdAt   DateTime  @default(now())
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  razorpayOrderId   String        @unique
+  razorpayPaymentId String?
+  amount            Int // in paise (₹50 = 5000)
+  currency          String        @default("INR")
+  status            PaymentStatus @default(CREATED)
+  userId            String
+  user              User          @relation(fields: [userId], references: [id])
+  stationId         String
+  connectorId       String
+  session           Session?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model Photo {
+  id         String   @id @default(cuid())
+  stationId  String
+  station    Station  @relation(fields: [stationId], references: [id])
+  url        String
+  uploadedBy String
+  createdAt  DateTime @default(now())
+}
+
+enum VehicleClass {
+  TWO_WHEELER
+  THREE_WHEELER
+  FOUR_WHEELER
+  COMMERCIAL
+}
+
+enum ConnectorType {
+  CCS_2
+  CHADEMO
+  TYPE_2_AC
+  BHARAT_AC_001
+  BHARAT_DC_001
+}
+
+enum ConnectorStatus {
+  AVAILABLE
+  OCCUPIED
+  FAULTED
+  OFFLINE
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
+
+enum SessionStatus {
+  INITIATED
+  PAYMENT_AUTHORIZED
+  STARTING
+  ACTIVE
+  STOPPING
+  COMPLETED
+  SETTLED
+  FAILED
+}

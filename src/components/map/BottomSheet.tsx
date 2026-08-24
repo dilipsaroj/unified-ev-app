@@ -135,8 +135,11 @@ export function BottomSheet({
           ))}
         {!loading && stations.length === 0 && (
           <div className="py-12 text-center">
-            <p style={{ fontSize: 14, color: 'var(--color-ink-3)' }}>
-              No stations match the active filters.
+            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)' }}>
+              No charging stations found
+            </p>
+            <p style={{ fontSize: 13, color: 'var(--color-ink-3)', marginTop: 8 }}>
+              Try zooming out, adjusting your filters, or moving the map to a busier area.
             </p>
           </div>
         )}

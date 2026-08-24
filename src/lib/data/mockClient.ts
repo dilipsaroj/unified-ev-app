@@ -200,6 +200,21 @@ const SESSION_CDR_DEFAULTS = {
 
 export const mockClient: DataClient = {
   async getStationsNear(lat, lng, radiusKm, filters) {
+    try {
+      const res = await fetch(
+        `/api/stations?lat=${lat}&lng=${lng}&radius=${radiusKm}`,
+      );
+      if (res.ok) {
+        const data: Station[] = await res.json();
+        // API already filters by radius and returns Station shape
+        // Apply client-side filters (connector type, availability, price, reliability)
+        return applyFilters(data, filters);
+      }
+    } catch {
+      // API unreachable — fall through to mock
+    }
+
+    // Mock fallback: used when API is down or in tests
     await randomDelay();
     const enriched = stations
       .map((s) => enrichStation(s, lat, lng))
@@ -208,10 +223,21 @@ export const mockClient: DataClient = {
   },
 
   async getStation(id) {
-    await randomDelay();
-    const station = stations.find((s) => s.id === id);
-    if (!station) return null;
-    return enrichStation(station);
+    const isMock = stations.some((s) => s.id === id);
+    if (isMock) {
+      await randomDelay();
+      const station = stations.find((s) => s.id === id);
+      if (!station) return null;
+      return enrichStation(station);
+    }
+
+    try {
+      const res = await fetch(`/api/stations/${id}`);
+      if (res.ok) return res.json();
+      return null;
+    } catch {
+      return null;
+    }
   },
 
   async getCPOs() {
@@ -355,10 +381,21 @@ export const mockClient: DataClient = {
   },
 
   async getReviewsForStation(stationId) {
-    await randomDelay();
-    const seeded = reviews.filter((r) => r.stationId === stationId);
-    const live = submittedReviews.filter((r) => r.stationId === stationId);
-    return [...live, ...seeded] as Review[];
+    const isMock = stations.some((s) => s.id === stationId);
+    if (isMock) {
+      await randomDelay();
+      const seeded = reviews.filter((r) => r.stationId === stationId);
+      const live = submittedReviews.filter((r) => r.stationId === stationId);
+      return [...live, ...seeded] as Review[];
+    }
+
+    try {
+      const res = await fetch(`/api/stations/${stationId}/reviews`);
+      if (res.ok) return res.json();
+    } catch {
+      // fall through
+    }
+    return [];
   },
 
   async getPhotosForStation(stationId) {
@@ -367,34 +404,60 @@ export const mockClient: DataClient = {
   },
 
   async submitReview(input: SubmitReviewInput) {
-    await randomDelay();
-    const station = stations.find((s) => s.id === input.stationId);
-    const review: Review = {
-      id: `r-${Date.now()}`,
-      stationId: input.stationId,
-      cpoId: station?.cpoId ?? 'unknown',
-      sessionId: input.sessionId,
-      userId: input.userId,
-      userName: DEMO_USER.name,
-      rating: input.rating,
-      text: input.text ?? '',
-      isCurated: false, // Real user-written, not seeded
-      createdAt: new Date().toISOString(),
-    };
-    // V1: in-memory only, doesn't persist beyond page reload
-    // Layer 2 will insert into Postgres via Supabase
-    submittedReviews.unshift(review);
-    return review;
+    const isMock = stations.some((s) => s.id === input.stationId);
+    if (isMock) {
+      await randomDelay();
+      const station = stations.find((s) => s.id === input.stationId);
+      const review: Review = {
+        id: `r-${Date.now()}`,
+        stationId: input.stationId,
+        cpoId: station?.cpoId ?? 'unknown',
+        sessionId: input.sessionId,
+        userId: input.userId,
+        userName: DEMO_USER.name,
+        rating: input.rating,
+        text: input.text ?? '',
+        isCurated: false,
+        createdAt: new Date().toISOString(),
+      };
+      submittedReviews.unshift(review);
+      return review;
+    }
+
+    const res = await fetch('/api/reviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stationId: input.stationId,
+        rating: input.rating,
+        text: input.text,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to submit review');
+    return data as Review;
   },
 
-  async sendOtp() {
-    await randomDelay();
-    return { nonce: 'demo-nonce' };
+  async sendOtp(phone: string): Promise<{ nonce: string }> {
+    const res = await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
+    return { nonce: data.nonce ?? '' };
   },
 
-  async verifyOtp() {
-    await randomDelay();
-    return DEMO_USER;
+  async verifyOtp(phone: string, otp: string): Promise<User> {
+    const res = await fetch('/api/auth/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, token: otp }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'OTP verification failed');
+    return data as User;
   },
 
   async getCurrentUser() {
