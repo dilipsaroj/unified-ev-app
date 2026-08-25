@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,25 +13,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const isDev = process.env.NODE_ENV === 'development'
-
-    if (isDev) {
-      // In dev: skip SMS entirely, hardcode OTP to 1234 (matches 4-box UI)
-      console.log(`[DEV] OTP for ${phone}: 1234`)
-      return NextResponse.json({ nonce: '' })
-    }
-
-    // Production: trigger SMS OTP via Supabase Phone Auth
-    // Requires: Supabase dashboard → Authentication → Providers → Phone → Enable
-    // and connect Twilio or MSG91 as the SMS provider
-    const { error } = await getSupabaseAdmin().auth.signInWithOtp({ phone })
-
-    if (error) {
-      console.error('Supabase OTP error:', error.message)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ nonce: '' })
+    // Dev OTP — no SMS provider wired yet
+    // Production SMS (Twilio/MSG91) is Layer 2
+    console.log(`[send-otp] OTP for ${phone}: 1234`)
+    return NextResponse.json({ nonce: 'demo' })
   } catch (err: any) {
     console.error('send-otp error:', err?.message)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
